@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<head>
+	<script type="text/javascript"
+	src="http://cdn.craftycomponents.com/crafty-release.js"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+Game = {
+map_grid: {
+    width:  13,
+    height: 5,
+    tile: {
+      width:  40,
+      height: 40
+    }
+  },
+
+width: function() {
+    return this.map_grid.width * this.map_grid.tile.width;
+  },
+ 
+  
+  height: function() {
+    return this.map_grid.height * this.map_grid.tile.height;
+  },
+
+  // Initialize and start our game
+ start: function() {
+    // Start crafty and set a background color so that we can see it's working
+    Crafty.init(Game.width(), Game.height());
+    Crafty.background('green');
+ 
+    for (var x = 0; x < Game.map_grid.width; x++) {
+      for (var y = 0; y < Game.map_grid.height; y++) {
+ 
+        if (((x%2==0 && y%2==0) || x%2==1 && y%2==1) && x !=6) {
+          Crafty.e('2D, Canvas, Color')
+            .attr({
+              x: x * Game.map_grid.tile.width,
+              y: y * Game.map_grid.tile.height,
+              w: Game.map_grid.tile.width,
+              h: Game.map_grid.tile.height
+            })
+            .color('black');
+        } else if(x!=6) {
+          // Place a bush entity at the current tile
+          Crafty.e('2D, Canvas, Color')
+            .attr({
+              x: x * Game.map_grid.tile.width,
+              y: y * Game.map_grid.tile.height,
+              w: Game.map_grid.tile.width,
+              h: Game.map_grid.tile.height
+            })
+            .color('red');
+        }
+      }
+    }
+}
+};
+window.addEventListener('load', Game.start);
+</script>
+
+
+  
+
+</body>
+</html>
