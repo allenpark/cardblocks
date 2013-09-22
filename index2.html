@@ -11,12 +11,15 @@ Game = {
 map_grid: {
     width:  13,
     height: 5,
+	player_width: 6,
     tile: {
       width:  80,
       height: 80
     },
 	contents: [[]],
   },
+player1pos: 0,
+player2pos: 0,
 
 width: function() {
     return this.map_grid.width * this.map_grid.tile.width;
@@ -67,7 +70,22 @@ width: function() {
 		.attr({ x: Game.map_grid.tile.width / 3,
 				y: Game.map_grid.tile.height / 3 + Game.map_grid.tile.height * 4,
 				w: Game.map_grid.tile.width / 3,
-				h: Game.map_grid.tile.height / 3 });
+				h: Game.map_grid.tile.height / 3 })
+		.bind("KeyDown", function(e) {
+			console.log(e.keyCode);
+			if (e.keyCode == 37) {
+				if (Game.player1pos > 0) {
+					--Game.player1pos;
+					this.x -= Game.map_grid.tile.width;
+				}
+			}
+			else if (e.keyCode == 39) {
+				if (Game.player1pos < Game.map_grid.player_width-1) {
+					++Game.player1pos;
+					this.x += Game.map_grid.tile.width;
+				}
+			}
+				});
 	Crafty.e("RightMarker, 2D, DOM, Color")
 		.color('rgb(127, 0, 255)')
 		.attr({ x: Game.map_grid.tile.width / 3 + Game.map_grid.tile.width * 7,
@@ -77,7 +95,6 @@ width: function() {
   }
 };
 window.addEventListener('load', Game.start);
-alert(Game.map_grid.contents);
 </script>
 
 
