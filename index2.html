@@ -60,11 +60,21 @@ width: function() {
             })
             .color('red');
         }
-		
-		
       }
     }
-}
+	Crafty.e("LeftMarker, 2D, DOM, Color")
+		.color('rgb(0,255,255)')
+		.attr({ x: Game.map_grid.tile.width / 3,
+				y: Game.map_grid.tile.height / 3 + Game.map_grid.tile.height * 4,
+				w: Game.map_grid.tile.width / 3,
+				h: Game.map_grid.tile.height / 3 });
+	Crafty.e("RightMarker, 2D, DOM, Color")
+		.color('rgb(127, 0, 255)')
+		.attr({ x: Game.map_grid.tile.width / 3 + Game.map_grid.tile.width * 7,
+				y: Game.map_grid.tile.height / 3 + Game.map_grid.tile.height * 4,
+				w: Game.map_grid.tile.width / 3,
+				h: Game.map_grid.tile.height / 3 });
+  }
 };
 window.addEventListener('load', Game.start);
 alert(Game.map_grid.contents);
