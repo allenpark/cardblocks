@@ -54,9 +54,22 @@ width: function() {
 	},
   dropCard: function(index) {
     if (index == 0) {
-	 this.player1card.moveTo(Game.player1pos * this.map_grid.tile.width + 5,
-							(this.map_grid.height - 1) * this.map_grid.tile.height + 5);
+	 c = this.player1pos;
+	 r = this.findLowestFreeCell(c);
+	 
+	 this.player1card.moveTo(c * this.map_grid.tile.width + 5,
+							 r * this.map_grid.tile.height + 5);
+	 this.map_grid.contents[c][r] = this.player1card.value;
 	 }
+	},
+	findLowestFreeCell: function(column) {
+	 for (i=this.map_grid.height-1; i>=0; --i) {
+	  if (this.map_grid.contents[column][i] == 0) {
+	  console.log(i);
+	   return i;
+	  }
+	 }
+	 return -1;
 	},
 					
   // Initialize and start our game
@@ -67,7 +80,6 @@ width: function() {
 	
 	var listener = Crafty.e("2D")
 					.bind('KeyDown', function(e) {
-						console.log("hi");
 						if (Game.player1card != null && (e.keyCode == 32 || e.keyCode == 40)) {
 							Game.dropCard(0);
 							
@@ -117,12 +129,16 @@ width: function() {
 				if (Game.player1pos > 0) {
 					--Game.player1pos;
 					this.x -= Game.map_grid.tile.width;
+					this.y = Game.map_grid.tile.height / 3 
+							+ Game.map_grid.tile.height * Game.findLowestFreeCell(Game.player1pos);
 				}
 			}
 			else if (e.keyCode == 39) {
 				if (Game.player1pos < Game.map_grid.player_width-1) {
 					++Game.player1pos;
 					this.x += Game.map_grid.tile.width;
+					this.y = Game.map_grid.tile.height / 3 
+							+ Game.map_grid.tile.height * Game.findLowestFreeCell(Game.player1pos);
 				}
 			}
 				});
