@@ -7,6 +7,9 @@
 <body>
 
 <script type="text/javascript">
+MIN_CARD = 1;
+MAX_CARD = 13;
+
 Game = {
 map_grid: {
     width:  13,
@@ -25,16 +28,15 @@ player2card: null,
 
 width: function() {
     return this.map_grid.width * this.map_grid.tile.width;
-  },
- 
-  
-  height: function() {
-    return 	this.map_grid.height * this.map_grid.tile.height
+},
+
+height: function() {
+    return this.map_grid.height * this.map_grid.tile.height
 			+ 2*this.map_grid.tile.height;
   },
   createCard: function() {
 	card = {};
-	card.value = Crafty.math.randomInt(1, 13);
+	card.value = Crafty.math.randomInt(MIN_CARD, MAX_CARD);
 	card.bg = Crafty.e("Card, 2D, Canvas, Color")
 				.color('rgb(255, 255, 255)')
 				.attr({ x: 0, y: 0,
