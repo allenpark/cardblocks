@@ -34,6 +34,7 @@ width: function() {
   },
   createCard: function() {
 	card = {};
+	card.value = Crafty.math.randomInt(1, 13);
 	card.bg = Crafty.e("Card, 2D, Canvas, Color")
 				.color('rgb(255, 255, 255)')
 				.attr({ x: 0, y: 0,
@@ -41,7 +42,7 @@ width: function() {
 					h: Game.map_grid.tile.height - 10 });
 	card.text = Crafty.e("2D, DOM, Text")
 				.attr({ x: 10, y:10, })
-				.text('6');
+				.text(card.value);
 				//TODO: figure out how to make the text larger
 	card.moveTo = function(x, y) { this.bg.x = x; this.bg.y = y; };
 	
