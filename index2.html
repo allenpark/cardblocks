@@ -17,7 +17,7 @@ map_grid: {
       height: 80
     },
 	contents: [[]],
-  },
+},
 player1pos: 0,
 player2pos: 0,
 
@@ -30,7 +30,24 @@ width: function() {
     return 	this.map_grid.height * this.map_grid.tile.height
 			+ 2*this.map_grid.tile.height;
   },
-
+  createCard: function() {
+	card = {};
+	card.bg = Crafty.e("Card, 2D, Canvas, Color")
+				.color('rgb(255, 255, 255)')
+				.attr({ x: 0, y: 0,
+					w: Game.map_grid.tile.width - 10,
+					h: Game.map_grid.tile.height - 10 });
+	card.text = Crafty.e("2D, Canvas, Text")
+				.attr({ x: 10, y:10, })
+				.text('6');
+				//TODO: figure out how to make the text larger
+	card.moveTo = function(x, y) { this.bg.x = x; this.bg.y = y; };
+	
+	card.bg.attach(card.text);
+	
+	return card;
+	},
+					
   // Initialize and start our game
  start: function() {
     // Start crafty and set a background color so that we can see it's working
@@ -65,7 +82,8 @@ width: function() {
         }
       }
     }
-	Crafty.e("LeftMarker, 2D, DOM, Color")
+	
+	Crafty.e("LeftMarker, 2D, Canvas, Color")
 		.color('rgb(0,255,255)')
 		.attr({ x: Game.map_grid.tile.width / 3,
 				y: Game.map_grid.tile.height / 3 + Game.map_grid.tile.height * 4,
@@ -86,13 +104,20 @@ width: function() {
 				}
 			}
 				});
-	Crafty.e("RightMarker, 2D, DOM, Color")
+	Crafty.e("RightMarker, 2D, Canvas, Color")
 		.color('rgb(127, 0, 255)')
 		.attr({ x: Game.map_grid.tile.width / 3 + Game.map_grid.tile.width * 7,
 				y: Game.map_grid.tile.height / 3 + Game.map_grid.tile.height * 4,
 				w: Game.map_grid.tile.width / 3,
 				h: Game.map_grid.tile.height / 3 });
-  }
+	
+	Crafty.e("2D, Canvas, Text")
+				.attr({ x: Game.map_grid.tile.width, y:Game.map_grid.tile.height * 6 - 8, })
+				.text('next card:');
+	
+	card = Game.createCard();
+	card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
+  },
 };
 window.addEventListener('load', Game.start);
 </script>
