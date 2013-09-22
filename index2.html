@@ -20,6 +20,8 @@ map_grid: {
 },
 player1pos: 0,
 player2pos: 0,
+player1card: null,
+player2card: null,
 
 width: function() {
     return this.map_grid.width * this.map_grid.tile.width;
@@ -37,15 +39,23 @@ width: function() {
 				.attr({ x: 0, y: 0,
 					w: Game.map_grid.tile.width - 10,
 					h: Game.map_grid.tile.height - 10 });
-	card.text = Crafty.e("2D, Canvas, Text")
+	card.text = Crafty.e("2D, DOM, Text")
 				.attr({ x: 10, y:10, })
 				.text('6');
 				//TODO: figure out how to make the text larger
 	card.moveTo = function(x, y) { this.bg.x = x; this.bg.y = y; };
 	
 	card.bg.attach(card.text);
+	card.bg.z = 1;
+	card.text.z = 2;
 	
 	return card;
+	},
+  dropCard: function(index) {
+    if (index == 0) {
+	 this.player1card.moveTo(Game.player1pos * this.map_grid.tile.width + 5,
+							(this.map_grid.height - 1) * this.map_grid.tile.height + 5);
+	 }
 	},
 					
   // Initialize and start our game
@@ -53,6 +63,18 @@ width: function() {
     // Start crafty and set a background color so that we can see it's working
     Crafty.init(Game.width(), Game.height());
     Crafty.background('green');
+	
+	var listener = Crafty.e("2D")
+					.bind('KeyDown', function(e) {
+						console.log("hi");
+						if (Game.player1card != null && (e.keyCode == 32 || e.keyCode == 40)) {
+							Game.dropCard(0);
+							
+							Game.player1card = Game.createCard();
+							Game.player1card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
+						}
+					});
+	Crafty.addEvent(listener, Crafty.stage.elem, "keydown", listener.onKeyDown);
  
     for (var x = 0; x < Game.map_grid.width; x++) {
 	  Game.map_grid.contents.push(new Array());
@@ -90,7 +112,6 @@ width: function() {
 				w: Game.map_grid.tile.width / 3,
 				h: Game.map_grid.tile.height / 3 })
 		.bind("KeyDown", function(e) {
-			console.log(e.keyCode);
 			if (e.keyCode == 37) {
 				if (Game.player1pos > 0) {
 					--Game.player1pos;
@@ -111,12 +132,12 @@ width: function() {
 				w: Game.map_grid.tile.width / 3,
 				h: Game.map_grid.tile.height / 3 });
 	
-	Crafty.e("2D, Canvas, Text")
-				.attr({ x: Game.map_grid.tile.width, y:Game.map_grid.tile.height * 6 - 8, })
+	Crafty.e("2D, DOM, Text")
+				.attr({ x: Game.map_grid.tile.width, y:Game.map_grid.tile.height * 6 - 20, w: 100, h: 100 })
 				.text('next card:');
 	
-	card = Game.createCard();
-	card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
+	Game.player1card = Game.createCard();
+	Game.player1card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
   },
 };
 window.addEventListener('load', Game.start);
