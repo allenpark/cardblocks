@@ -8,7 +8,7 @@
 
 <script type="text/javascript">
 var MIN_CARD = 1;
-var MAX_CARD = 13;
+var MAX_CARD = 4;
 var MIN_DUPLICATE_SIZE = 2;
 var MIN_STRAIGHT_SIZE = 3;
 
@@ -22,6 +22,7 @@ map_grid: {
         height: 80
     },
     contents: [[]],
+    cards: [[]],
 },
 player1pos: 0,
 player2pos: 0,
@@ -41,7 +42,7 @@ height: function() {
 createCard: function() {
     var card = {};
     card.value = Crafty.math.randomInt(MIN_CARD, MAX_CARD);
-    card.bg = Crafty.e("Card, 2D, Canvas, Color")
+    card.bg = Crafty.e("Card, 2D, DOM, Color")
                     .color('rgb(255, 255, 255)')
                     .attr({ x: 0,
                             y: 0,
@@ -67,6 +68,7 @@ dropCard: function(index) {
         this.player1card.moveTo(column * this.map_grid.tile.width + 5,
                                  row * this.map_grid.tile.height + 5);
         this.map_grid.contents[column][row] = this.player1card.value;
+        this.map_grid.cards[column][row] = this.player1card;
         return [column, row];
     }
     return [-1, -1];
@@ -195,11 +197,25 @@ checkCellForBlocks: function(cellX, cellY) {
 
     return bestBlock;
 },
+removeBlock: function(block) {
+    var movedBlocks = [];
+    for (var x = block.bottomX; x <= block.topX; x++) {
+        for (var y = block.bottomY; y <= block.topY; y++) {
+            if (this.map_grid.contents[x][y] == -1) {
+                console.log('Square (' + x + ', ' + y + ') was empty before being cleared.');
+            }
+            this.map_grid.contents[x][y] = -1;
+            this.map_grid.cards[x][y].text.removeComponent("DOM");
+            this.map_grid.cards[x][y].bg.removeComponent("DOM");
+            this.map_grid.cards[x][y] = null;
+        }
+    }
+},
     
         
 findLowestFreeCell: function(column) {
     for (var i=this.map_grid.height-1; i>=0; --i) {
-        if (this.map_grid.contents[column][i] == 0) {
+        if (this.map_grid.contents[column][i] == -1) {
             return i;
         }
     }
@@ -214,8 +230,10 @@ start: function() {
 
     for (var x = 0; x < Game.map_grid.width; x++) {
         Game.map_grid.contents.push(new Array());
+        Game.map_grid.cards.push(new Array());
         for (var y = 0; y < Game.map_grid.height; y++) {
-            Game.map_grid.contents[x].push(0);
+            Game.map_grid.contents[x].push(-1);
+            Game.map_grid.cards[x].push(null);
 
             //color everything in
             if (((x%2==0 && y%2==0) || x%2==1 && y%2==1) && x !=6) {
@@ -241,7 +259,7 @@ start: function() {
         }
     }
     
-    Crafty.e("LeftMarker, 2D, Canvas, Color")
+    Crafty.e("LeftMarker, 2D, DOM, Color")
         .color('rgb(0,255,255)')
         .attr({ x: Game.map_grid.tile.width / 3,
                 y: Game.map_grid.tile.height / 3 + Game.map_grid.tile.height * 4,
@@ -268,12 +286,16 @@ start: function() {
 
                 Game.player1card = Game.createCard();
                 Game.player1card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
-                console.log(Game.checkCellForBlocks(dropPos[0], dropPos[1]));
+                var block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
+                if (block) {
+                    console.log(block);
+                    Game.removeBlock(block);
+                }
                 refreshCursorPos();
             }
 
         });
-    Crafty.e("RightMarker, 2D, Canvas, Color")
+    Crafty.e("RightMarker, 2D, DOM, Color")
         .color('rgb(127, 0, 255)')
         .attr({x: Game.map_grid.tile.width / 3 + Game.map_grid.tile.width * 7,
                y: Game.map_grid.tile.height / 3 + Game.map_grid.tile.height * 4,
