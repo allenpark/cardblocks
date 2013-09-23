@@ -1,12 +1,3 @@
-<!DOCTYPE html>
-
-<head>
-    <script type="text/javascript" src="crafty-min.js"></script>
-    <!--src="http://cdn.craftycomponents.com/crafty-release.js"></script>-->
-</head>
-<body>
-
-<script type="text/javascript">
 var MIN_CARD = 1;
 var MAX_CARD = 4;
 var MIN_DUPLICATE_SIZE = 2;
@@ -399,6 +390,3 @@ start: function() {
 }
 };
 window.addEventListener('load', Game.start);
-</script>
-</body>
-</html>
