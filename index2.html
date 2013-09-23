@@ -81,11 +81,6 @@ start: function() {
     Crafty.init(Game.width(), Game.height());
     Crafty.background('green');
 
-/*    var listener = Crafty.e("2D")
-                         .bind('KeyDown', function(e) {
-                         });
-    Crafty.addEvent(listener, Crafty.stage.elem, "keydown", listener.onKeyDown);*/
-
     for (var x = 0; x < Game.map_grid.width; x++) {
         Game.map_grid.contents.push(new Array());
         for (var y = 0; y < Game.map_grid.height; y++) {
@@ -122,32 +117,27 @@ start: function() {
                 w: Game.map_grid.tile.width / 3,
                 h: Game.map_grid.tile.height / 3 })
         .bind("KeyDown", function(e) {
+            var refreshCursorPos = function() {
+                this.x = Game.map_grid.tile.width * Game.player1pos + Game.map_grid.tile.width / 3;
+                this.y = Game.map_grid.tile.height / 3 
+                         + Game.map_grid.tile.height * Game.findLowestFreeCell(Game.player1pos);
+            }.bind(this);
             if (e.keyCode == 37) {
                 if (Game.player1pos > 0) {
                     --Game.player1pos;
-                    //refreshCursorPos();
-                    //this.x -= Game.map_grid.tile.width;
-                    this.x = Game.map_grid.tile.width * Game.player1pos + Game.map_grid.tile.width / 3;
-                    this.y = Game.map_grid.tile.height / 3 
-                             + Game.map_grid.tile.height * Game.findLowestFreeCell(Game.player1pos);
+                    refreshCursorPos();
                 }
             } else if (e.keyCode == 39) {
                 if (Game.player1pos < Game.map_grid.player_width-1) {
                     ++Game.player1pos;
-                    //this.x += Game.map_grid.tile.width;
-                    //refreshCursorPos();
-                    this.x = Game.map_grid.tile.width * Game.player1pos + Game.map_grid.tile.width / 3;
-                    this.y = Game.map_grid.tile.height / 3 
-                             + Game.map_grid.tile.height * Game.findLowestFreeCell(Game.player1pos);
+                    refreshCursorPos();
                 }
             } else if (Game.player1card != null && (e.keyCode == 32 || e.keyCode == 40)) {
                 Game.dropCard(0);
 
                 Game.player1card = Game.createCard();
                 Game.player1card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
-                this.x = Game.map_grid.tile.width * Game.player1pos + Game.map_grid.tile.width / 3;
-                this.y = Game.map_grid.tile.height / 3 
-                         + Game.map_grid.tile.height * Game.findLowestFreeCell(Game.player1pos);
+                refreshCursorPos();
             }
 
         });
