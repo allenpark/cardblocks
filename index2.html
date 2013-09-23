@@ -27,6 +27,8 @@ player1pos: 0,
 player2pos: 0,
 player1card: null,
 player2card: null,
+player1points: 0,
+player2points: 0,
 
 width: function() {
     return this.map_grid.width * this.map_grid.tile.width;
@@ -59,17 +61,29 @@ createCard: function() {
 },
 dropCard: function(index) {
     if (index == 0) {
-        var c = this.player1pos;
-        var r = this.findLowestFreeCell(c);
+        var column = this.player1pos;
+        var row = this.findLowestFreeCell(column);
      
-        this.player1card.moveTo(c * this.map_grid.tile.width + 5,
-                                 r * this.map_grid.tile.height + 5);
-        this.map_grid.contents[c][r] = this.player1card.value;
+        this.player1card.moveTo(column * this.map_grid.tile.width + 5,
+                                 row * this.map_grid.tile.height + 5);
+        this.map_grid.contents[column][row] = this.player1card.value;
+        return [column, row];
     }
-},/*
+    return [-1, -1];
+},
+calculatePoints: function(size, type) {
+    if (type == 'duplicates') {
+        return size;
+    } else if (type == 'straights') {
+        return size + 1;
+    }
+},
 checkCellForBlocks: function(cellX, cellY) {
-    // Checking X duplicates first.
     var cellContents = this.map_grid.contents[cellX][cellY];
+    var bestBlock = null;
+    var type = 'duplicates';
+
+    // Checking X duplicates.
     var bottomX = cellX - 1;
     while (bottomX >= 0 && this.map_grid.contents[bottomX][cellY] == cellContents) {
         bottomX --;
@@ -81,12 +95,111 @@ checkCellForBlocks: function(cellX, cellY) {
     }
     topX --; // This is the top contiguous x that matches cellContents.
     if (topX - bottomX + 1 >= MIN_DUPLICATE_SIZE) {
-        */
+        var points = this.calculatePoints(topX - bottomX + 1, type);
+        if (!bestBlock || points >= bestBlock.points) {
+            bestBlock = {bottomX: bottomX, bottomY: cellY, topX: topX, topY: cellY, type: type, points: points};
+        }
+    }
+
+    // Checking Y duplicates.
+    var bottomY = cellY - 1;
+    while (bottomY >= 0 && this.map_grid.contents[cellX][bottomY] == cellContents) {
+        bottomY --;
+    }
+    bottomY ++; // This is the lowest contiguous y that matches cellContents.
+    var topY = cellY + 1;
+    while (topY < this.map_grid.width && this.map_grid.contents[cellX][topY] == cellContents) {
+        topY ++;
+    }
+    topY --; // This is the top contiguous y that matches cellContents.
+    if (topY - bottomY + 1 >= MIN_DUPLICATE_SIZE) {
+        var points = this.calculatePoints(topY - bottomY + 1, type);
+        if (!bestBlock || points >= bestBlock.points) {
+            bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, type: type, points: points};
+        }
+    }
+
+    type = 'straights';
+
+    // Checking X increasing straights.
+    var bottomX = cellX - 1;
+    while (bottomX >= 0 && this.map_grid.contents[bottomX][cellY] == cellContents - (cellX - bottomX)) {
+        bottomX --;
+    }
+    bottomX ++; // This is the lowest contiguous x that matches cellContents.
+    var topX = cellX + 1;
+    while (topX < this.map_grid.width && this.map_grid.contents[topX][cellY] == cellContents + (topX - cellX)) {
+        topX ++;
+    }
+    topX --; // This is the top contiguous x that matches cellContents.
+    if (topX - bottomX + 1 >= MIN_STRAIGHT_SIZE) {
+        var points = this.calculatePoints(topX - bottomX + 1, type);
+        if (!bestBlock || points >= bestBlock.points) {
+            bestBlock = {bottomX: bottomX, bottomY: cellY, topX: topX, topY: cellY, type: type, points: points};
+        }
+    }
+
+    // Checking X decreasing straights.
+    var bottomX = cellX - 1;
+    while (bottomX >= 0 && this.map_grid.contents[bottomX][cellY] == cellContents + (cellX - bottomX)) {
+        bottomX --;
+    }
+    bottomX ++; // This is the lowest contiguous x that matches cellContents.
+    var topX = cellX + 1;
+    while (topX < this.map_grid.width && this.map_grid.contents[topX][cellY] == cellContents - (topX - cellX)) {
+        topX ++;
+    }
+    topX --; // This is the top contiguous x that matches cellContents.
+    if (topX - bottomX + 1 >= MIN_STRAIGHT_SIZE) {
+        var points = this.calculatePoints(topX - bottomX + 1, type);
+        if (!bestBlock || points >= bestBlock.points) {
+            bestBlock = {bottomX: bottomX, bottomY: cellY, topX: topX, topY: cellY, type: type, points: points};
+        }
+    }
+
+    // Checking Y increasing straights.
+    var bottomY = cellY - 1;
+    while (bottomY >= 0 && this.map_grid.contents[cellX][bottomY] == cellContents - (cellY - bottomY)) {
+        bottomY --;
+    }
+    bottomY ++; // This is the lowest contiguous y that matches cellContents.
+    var topY = cellY + 1;
+    while (topY < this.map_grid.width && this.map_grid.contents[cellX][topY] == cellContents + (topY - cellY)) {
+        topY ++;
+    }
+    topY --; // This is the top contiguous y that matches cellContents.
+    if (topY - bottomY + 1 >= MIN_STRAIGHT_SIZE) {
+        var points = this.calculatePoints(topX - bottomX + 1, type);
+        if (!bestBlock || points >= bestBlock.points) {
+            bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, type: type, points: points};
+        }
+    }
+
+    // Checking Y decreasing straights.
+    var bottomY = cellY - 1;
+    while (bottomY >= 0 && this.map_grid.contents[cellX][bottomY] == cellContents + (cellY - bottomY)) {
+        bottomY --;
+    }
+    bottomY ++; // This is the lowest contiguous y that matches cellContents.
+    var topY = cellY + 1;
+    while (topY < this.map_grid.width && this.map_grid.contents[cellX][topY] == cellContents - (topY - cellY)) {
+        topY ++;
+    }
+    topY --; // This is the top contiguous y that matches cellContents.
+    if (topY - bottomY + 1 >= MIN_STRAIGHT_SIZE) {
+        var points = this.calculatePoints(topY - bottomY + 1, type);
+        if (!bestBlock || points >= bestBlock.points) {
+            bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, type: type, points: points};
+        }
+    }
+
+    return bestBlock;
+},
+    
         
 findLowestFreeCell: function(column) {
     for (var i=this.map_grid.height-1; i>=0; --i) {
         if (this.map_grid.contents[column][i] == 0) {
-            console.log(i);
             return i;
         }
     }
@@ -151,10 +264,11 @@ start: function() {
                     refreshCursorPos();
                 }
             } else if (Game.player1card != null && (e.keyCode == 32 || e.keyCode == 40)) {
-                Game.dropCard(0);
+                var dropPos = Game.dropCard(0);
 
                 Game.player1card = Game.createCard();
                 Game.player1card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
+                console.log(Game.checkCellForBlocks(dropPos[0], dropPos[1]));
                 refreshCursorPos();
             }
 
