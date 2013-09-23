@@ -9,6 +9,8 @@
 <script type="text/javascript">
 var MIN_CARD = 1;
 var MAX_CARD = 13;
+var MIN_DUPLICATE_SIZE = 2;
+var MIN_STRAIGHT_SIZE = 3;
 
 var Game = {
 map_grid: {
@@ -64,7 +66,23 @@ dropCard: function(index) {
                                  r * this.map_grid.tile.height + 5);
         this.map_grid.contents[c][r] = this.player1card.value;
     }
-},
+},/*
+checkCellForBlocks: function(cellX, cellY) {
+    // Checking X duplicates first.
+    var cellContents = this.map_grid.contents[cellX][cellY];
+    var bottomX = cellX - 1;
+    while (bottomX >= 0 && this.map_grid.contents[bottomX][cellY] == cellContents) {
+        bottomX --;
+    }
+    bottomX ++; // This is the lowest contiguous x that matches cellContents.
+    var topX = cellX + 1;
+    while (topX < this.map_grid.width && this.map_grid.contents[topX][cellY] == cellContents) {
+        topX ++;
+    }
+    topX --; // This is the top contiguous x that matches cellContents.
+    if (topX - bottomX + 1 >= MIN_DUPLICATE_SIZE) {
+        */
+        
 findLowestFreeCell: function(column) {
     for (var i=this.map_grid.height-1; i>=0; --i) {
         if (this.map_grid.contents[column][i] == 0) {
