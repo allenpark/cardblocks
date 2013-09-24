@@ -266,7 +266,7 @@ makeBlocksFall: function() {
                     x * this.map_grid.tile.width + 5,
                     lowestFreeCell * this.map_grid.tile.height + 5);
                 movedBlocks.push([x, lowestFreeCell]);
-                lowestFreeCell ++;
+                lowestFreeCell --;
             }
         }
     }
@@ -274,8 +274,6 @@ makeBlocksFall: function() {
     var largestBlock = null;
     for (var i = 0; i < movedBlocks.length; i++) {
         var block = this.checkCellForBlocks(movedBlocks[i][0], movedBlocks[i][1]);
-        console.log(this.map_grid.cards.value);
-        console.log(block);
         if (block && (!largestBlock || block.points > largestBlock.points)) {
             largestBlock = block;
         }
