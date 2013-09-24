@@ -49,15 +49,17 @@ Crafty.scene("menu", function() {
 
 var Game = {
 map_grid: {
-    width:  13,
     height: 5,
     player_width: 6,
+    width: 13, // player_width * 2 + 1
     tile: {
         width:  80,
         height: 80
     },
-    contents: [[]],
     cards: [[]],
+},
+empty_card: {
+    value: -1
 },
 player1pos: 0,
 player2pos: 0,
@@ -107,7 +109,6 @@ dropCard: function(index) {
      
         this.player1card.moveTo(column * this.map_grid.tile.width + 5,
                                  row * this.map_grid.tile.height + 5);
-        this.map_grid.contents[column][row] = this.player1card.value;
         this.map_grid.cards[column][row] = this.player1card;
         return [column, row];
     }
@@ -121,18 +122,18 @@ calculatePoints: function(size, type) {
     }
 },
 checkCellForBlocks: function(cellX, cellY) {
-    var cellContents = this.map_grid.contents[cellX][cellY];
+    var cellContents = this.map_grid.cards[cellX][cellY].value;
     var bestBlock = null;
     var type = 'duplicates';
 
     // Checking X duplicates.
     var bottomX = cellX - 1;
-    while (bottomX >= 0 && this.map_grid.contents[bottomX][cellY] == cellContents) {
+    while (bottomX >= 0 && this.map_grid.cards[bottomX][cellY].value == cellContents) {
         bottomX --;
     }
     bottomX ++; // This is the lowest contiguous x that matches cellContents.
     var topX = cellX + 1;
-    while (topX < this.map_grid.width && this.map_grid.contents[topX][cellY] == cellContents) {
+    while (topX < this.map_grid.player_width && this.map_grid.cards[topX][cellY].value == cellContents) {
         topX ++;
     }
     topX --; // This is the top contiguous x that matches cellContents.
@@ -145,12 +146,12 @@ checkCellForBlocks: function(cellX, cellY) {
 
     // Checking Y duplicates.
     var bottomY = cellY - 1;
-    while (bottomY >= 0 && this.map_grid.contents[cellX][bottomY] == cellContents) {
+    while (bottomY >= 0 && this.map_grid.cards[cellX][bottomY].value == cellContents) {
         bottomY --;
     }
     bottomY ++; // This is the lowest contiguous y that matches cellContents.
     var topY = cellY + 1;
-    while (topY < this.map_grid.width && this.map_grid.contents[cellX][topY] == cellContents) {
+    while (topY < this.map_grid.height && this.map_grid.cards[cellX][topY].value == cellContents) {
         topY ++;
     }
     topY --; // This is the top contiguous y that matches cellContents.
@@ -165,12 +166,12 @@ checkCellForBlocks: function(cellX, cellY) {
 
     // Checking X increasing straights.
     var bottomX = cellX - 1;
-    while (bottomX >= 0 && this.map_grid.contents[bottomX][cellY] == cellContents - (cellX - bottomX)) {
+    while (bottomX >= 0 && this.map_grid.cards[bottomX][cellY].value == cellContents - (cellX - bottomX)) {
         bottomX --;
     }
     bottomX ++; // This is the lowest contiguous x that matches cellContents.
     var topX = cellX + 1;
-    while (topX < this.map_grid.width && this.map_grid.contents[topX][cellY] == cellContents + (topX - cellX)) {
+    while (topX < this.map_grid.player_width && this.map_grid.cards[topX][cellY].value == cellContents + (topX - cellX)) {
         topX ++;
     }
     topX --; // This is the top contiguous x that matches cellContents.
@@ -183,12 +184,12 @@ checkCellForBlocks: function(cellX, cellY) {
 
     // Checking X decreasing straights.
     var bottomX = cellX - 1;
-    while (bottomX >= 0 && this.map_grid.contents[bottomX][cellY] == cellContents + (cellX - bottomX)) {
+    while (bottomX >= 0 && this.map_grid.cards[bottomX][cellY].value == cellContents + (cellX - bottomX)) {
         bottomX --;
     }
     bottomX ++; // This is the lowest contiguous x that matches cellContents.
     var topX = cellX + 1;
-    while (topX < this.map_grid.width && this.map_grid.contents[topX][cellY] == cellContents - (topX - cellX)) {
+    while (topX < this.map_grid.player_width && this.map_grid.cards[topX][cellY].value == cellContents - (topX - cellX)) {
         topX ++;
     }
     topX --; // This is the top contiguous x that matches cellContents.
@@ -201,12 +202,12 @@ checkCellForBlocks: function(cellX, cellY) {
 
     // Checking Y increasing straights.
     var bottomY = cellY - 1;
-    while (bottomY >= 0 && this.map_grid.contents[cellX][bottomY] == cellContents - (cellY - bottomY)) {
+    while (bottomY >= 0 && this.map_grid.cards[cellX][bottomY].value == cellContents - (cellY - bottomY)) {
         bottomY --;
     }
     bottomY ++; // This is the lowest contiguous y that matches cellContents.
     var topY = cellY + 1;
-    while (topY < this.map_grid.width && this.map_grid.contents[cellX][topY] == cellContents + (topY - cellY)) {
+    while (topY < this.map_grid.height && this.map_grid.cards[cellX][topY].value == cellContents + (topY - cellY)) {
         topY ++;
     }
     topY --; // This is the top contiguous y that matches cellContents.
@@ -219,12 +220,12 @@ checkCellForBlocks: function(cellX, cellY) {
 
     // Checking Y decreasing straights.
     var bottomY = cellY - 1;
-    while (bottomY >= 0 && this.map_grid.contents[cellX][bottomY] == cellContents + (cellY - bottomY)) {
+    while (bottomY >= 0 && this.map_grid.cards[cellX][bottomY].value == cellContents + (cellY - bottomY)) {
         bottomY --;
     }
     bottomY ++; // This is the lowest contiguous y that matches cellContents.
     var topY = cellY + 1;
-    while (topY < this.map_grid.width && this.map_grid.contents[cellX][topY] == cellContents - (topY - cellY)) {
+    while (topY < this.map_grid.height && this.map_grid.cards[cellX][topY].value == cellContents - (topY - cellY)) {
         topY ++;
     }
     topY --; // This is the top contiguous y that matches cellContents.
@@ -243,27 +244,24 @@ removeBlock: function(block) {
     }
     for (var x = block.bottomX; x <= block.topX; x++) {
         for (var y = block.bottomY; y <= block.topY; y++) {
-            if (this.map_grid.contents[x][y] == -1) {
+            if (this.map_grid.cards[x][y].value == -1) {
                 console.log('Square (' + x + ', ' + y + ') was empty before being cleared.');
             }
-            this.map_grid.contents[x][y] = -1;
             this.map_grid.cards[x][y].text.removeComponent("DOM");
             this.map_grid.cards[x][y].bg.removeComponent("DOM");
-            this.map_grid.cards[x][y] = null;
+            this.map_grid.cards[x][y] = this.empty_card;
         }
     }
     this.makeBlocksFall();
 },
 makeBlocksFall: function() {
     var movedBlocks = [];
-    for (var x = 0; x < this.map_grid.width; x++) {
+    for (var x = 0; x < this.map_grid.player_width; x++) {
         var lowestFreeCell = this.findLowestFreeCell(x);
         for (var y = lowestFreeCell-1; y >= 0; y--) {
-            if (this.map_grid.contents[x][y] != -1) {
-                this.map_grid.contents[x][lowestFreeCell] = this.map_grid.contents[x][y];
+            if (this.map_grid.cards[x][y].value != -1) {
                 this.map_grid.cards[x][lowestFreeCell] = this.map_grid.cards[x][y];
-                this.map_grid.contents[x][y] = -1;
-                this.map_grid.cards[x][y] = null;
+                this.map_grid.cards[x][y] = this.empty_card;
                 this.map_grid.cards[x][lowestFreeCell].moveTo(
                     x * this.map_grid.tile.width + 5,
                     lowestFreeCell * this.map_grid.tile.height + 5);
@@ -276,7 +274,7 @@ makeBlocksFall: function() {
     var largestBlock = null;
     for (var i = 0; i < movedBlocks.length; i++) {
         var block = this.checkCellForBlocks(movedBlocks[i][0], movedBlocks[i][1]);
-        console.log(this.map_grid.contents);
+        console.log(this.map_grid.cards.value);
         console.log(block);
         if (block && (!largestBlock || block.points > largestBlock.points)) {
             largestBlock = block;
@@ -292,7 +290,7 @@ makeBlocksFall: function() {
         
 findLowestFreeCell: function(column) {
     for (var i=this.map_grid.height-1; i>=0; --i) {
-        if (this.map_grid.contents[column][i] == -1) {
+        if (this.map_grid.cards[column][i].value == -1) {
             return i;
         }
     }
@@ -312,14 +310,12 @@ start: function() {
     Crafty.scene("menu");
 
     for (var x = 0; x < Game.map_grid.width; x++) {
-        Game.map_grid.contents.push(new Array());
         Game.map_grid.cards.push(new Array());
         for (var y = 0; y < Game.map_grid.height; y++) {
-            Game.map_grid.contents[x].push(-1);
-            Game.map_grid.cards[x].push(null);
+            Game.map_grid.cards[x].push(Game.empty_card);
 
             //color everything in
-            if (((x%2==0 && y%2==0) || x%2==1 && y%2==1) && x !=6) {
+            if (((x%2==0 && y%2==0) || x%2==1 && y%2==1) && x != 6) {
                 Crafty.e('2D, Canvas, Color')
                       .attr({
                           x: x * Game.map_grid.tile.width,
@@ -366,7 +362,6 @@ start: function() {
                 Game.player1card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
                 var block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
                 if (block) {
-//                    console.log(block);
                     Game.removeBlock(block);
                 }
                 Game.refreshCursorPos();
