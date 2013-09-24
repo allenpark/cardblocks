@@ -4,48 +4,47 @@ var MIN_DUPLICATE_SIZE = 2;
 var MIN_STRAIGHT_SIZE = 3;
 
 Crafty.scene("menu", function() {
-   var count=90;
+    var count=90;
 
-   var timeText = Crafty.e("2D, DOM, Text").attr({
-    w : 2170,
-    h : 400,
-    x : 370,
-    y : 450
-}).text("time remaining: " + count).textFont({
-    size : '40px'   
-});
+    var timeText = Crafty.e("2D, DOM, Text").attr({
+        w : 2170,
+        h : 400,
+        x : 370,
+        y : 450
+    }).text("time remaining: " + count).textFont({
+        size : '40px'   
+    });
 
-   var counter=setInterval(timer, 1000); //1000 will  run it every 1 second
+    var counter=setInterval(timer, 1000); //1000 will  run it every 1 second
 
 
-   function timer()
-   {
-     count=count-1;
-     if (count < 0)
-     {
-        clearInterval(counter);
-        return;
-     }
-     var min =Math.floor(count/60);
-     var sec =  count%60
-     if(sec<10){
-        timeText.text("time remaining: " + min + ": " + "0" + sec );
-     }
-     else{
-        timeText.text("time remaining: " + min + ": " + sec );
-     }
+    function timer()
+    {
+        count=count-1;
+        if (count < 0)
+        {
+            clearInterval(counter);
+            return;
+        }
+        var min =Math.floor(count/60);
+        var sec =  count%60
+        if (sec<10)
+        {
+            timeText.text("time remaining: " + min + ": " + "0" + sec );
+        } else {
+            timeText.text("time remaining: " + min + ": " + sec );
+        }
+    }
 
-}
-
-timer();
-   var titleText = Crafty.e("2D, DOM, Text").attr({
-    w : 2170,
-    h : 400,
-    x : 435,
-    y : 0
-}).text("CardBlocks").textFont({
-    size : '40px'
-});
+    timer();
+    var titleText = Crafty.e("2D, DOM, Text").attr({
+        w : 2170,
+        h : 400,
+        x : 435,
+        y : 0
+    }).text("CardBlocks").textFont({
+        size : '40px'
+    });
 });
 
 var Game = {
