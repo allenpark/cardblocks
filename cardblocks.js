@@ -159,7 +159,7 @@ checkCellForBlocks: function(cellX, cellY) {
     }
     bottomX ++; // This is the lowest contiguous x that matches cellContents.
     var topX = cellX + 1;
-    while (topX < this.map_grid.player_width && this.map_grid.cards[topX][cellY].value == cellContents) {
+    while (topX < this.map_grid.width && this.map_grid.cards[topX][cellY].value == cellContents) {
         topX ++;
     }
     topX --; // This is the top contiguous x that matches cellContents.
@@ -197,7 +197,7 @@ checkCellForBlocks: function(cellX, cellY) {
     }
     bottomX ++; // This is the lowest contiguous x that matches cellContents.
     var topX = cellX + 1;
-    while (topX < this.map_grid.player_width && this.map_grid.cards[topX][cellY].value == cellContents + (topX - cellX)) {
+    while (topX < this.map_grid.width && this.map_grid.cards[topX][cellY].value == cellContents + (topX - cellX)) {
         topX ++;
     }
     topX --; // This is the top contiguous x that matches cellContents.
@@ -215,7 +215,7 @@ checkCellForBlocks: function(cellX, cellY) {
     }
     bottomX ++; // This is the lowest contiguous x that matches cellContents.
     var topX = cellX + 1;
-    while (topX < this.map_grid.player_width && this.map_grid.cards[topX][cellY].value == cellContents - (topX - cellX)) {
+    while (topX < this.map_grid.width && this.map_grid.cards[topX][cellY].value == cellContents - (topX - cellX)) {
         topX ++;
     }
     topX --; // This is the top contiguous x that matches cellContents.
