@@ -6,6 +6,8 @@ var MIN_STRAIGHT_SIZE = 3;
 var gameOver = function(youWon, message) {
     Crafty("*").each(function() {
         this.destroy();
+
+
     });
 
     var displayText = "GAME OVER";
@@ -32,11 +34,27 @@ var gameOver = function(youWon, message) {
             size : '40px'   
         });
     }
+
+var playagain = Crafty.e("2D, DOM, Text, Mouse").attr({
+		 w : 2170,
+		 h : 400,
+		 x : 330,
+		 y : 100
+	     }).text("Click to Play Again").textFont({
+		 size : '40px'   
+	     });
+
+playagain.bind('MouseUp', function(e) {
+    if( e.mouseButton == Crafty.mouseButtons.LEFT ){
+	location.reload();
+    }
+});
+ 
 };
 
 
 Crafty.scene("menu", function() {
-    var count=180;
+    var count=300;
 
     var timeText = Crafty.e("2D, DOM, Text").attr({
         w : 2170,
@@ -73,6 +91,7 @@ Crafty.scene("menu", function() {
     }
 
     timer();
+/*
     var titleText = Crafty.e("2D, DOM, Text").attr({
         w : 2170,
         h : 400,
@@ -81,6 +100,7 @@ Crafty.scene("menu", function() {
     }).text("CardBlocks").textFont({
         size : '40px'
     });
+*/
 });
 
 var Game = {
