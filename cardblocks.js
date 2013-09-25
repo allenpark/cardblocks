@@ -150,7 +150,8 @@ createCard: function() {
                             h: Game.map_grid.tile.height - 10 });
     card.text = Crafty.e("2D, DOM, Text")
                       .attr({ x: 10, y:10, })
-                      .text(card.value);
+                      .text(card.value).textFont({
+			  size : '25px' });
                 //TODO: figure out how to make the text larger
     card.moveTo = function(x, y) { this.bg.x = x; this.bg.y = y; };
     
@@ -507,7 +508,9 @@ start: function() {
     
     Crafty.e("2D, DOM, Text")
           .attr({x: Game.map_grid.tile.width, y:Game.map_grid.tile.height * 6 - 20, w: 100, h: 100 })
-          .text('next card:');
+        .text('next card:').textFont({
+		 size : '15px'   
+	     });
 		  
 	Game.player1pointsText = Crafty.e("2D, DOM, Text").attr({
 		w : 2170,

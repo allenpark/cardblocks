@@ -45,7 +45,7 @@ eText.bind('MouseDown', function(g) {
 		 h : 400,
 		 x : 270,
 		 y : 0
-	     }).text("Thanks for Playing").textFont({
+	     }).text("Thanks for Playing our Crafty Game").textFont({
 		 size : '40px'   
 	     });
  var tText = Crafty.e("2D, DOM, Text, Mouse").attr({
