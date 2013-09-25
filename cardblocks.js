@@ -2,8 +2,10 @@ var MIN_CARD = 1;
 var MAX_CARD = 9;
 var MIN_DUPLICATE_SIZE = 2;
 var MIN_STRAIGHT_SIZE = 3;
+var gameOver = false;
 
-var gameOver = function(youWon, message) {
+var gameFinished = function(youWon, message) {
+    gameOver = true;
     Crafty("*").each(function() {
         this.destroy();
 
@@ -61,17 +63,14 @@ Crafty.scene("menu", function() {
         h : 400,
         x : 370,
         y : 450
-    }).text("time remaining: " + count).textFont({
+    }).text(count).textFont({
         size : '40px'   
     });
-
-    var counter=setInterval(timer, 1000); //1000 will  run it every 1 second
-
 
     function timer()
     {
         count=count-1;
-        if (count < 0)
+        if (count <= 0 || gameOver)
         {
             clearInterval(counter);
             return;
@@ -86,10 +85,12 @@ Crafty.scene("menu", function() {
         }
 	    if (min ==0 && sec == 0) {
             var message = "You: " + Game.player1points + " Him: " + Game.player2points;
-            gameOver(Game.player1points >= Game.player2points, message);
+            gameFinished(Game.player1points >= Game.player2points, message);
         }
     }
 
+    var counter=setInterval(timer, 1000); //1000 will run it every 1 second
+	count++; // Makes the count start at the original count.
     timer();
 /*
     var titleText = Crafty.e("2D, DOM, Text").attr({
@@ -491,10 +492,10 @@ start: function() {
                 Game.refreshCursorPos();
                 Game.updatePointsDisplay();
                 if (Game.checkPlayer1Lose()) {
-                    gameOver(false);
+                    gameFinished(false, "You ran out of room!");
                 }
                 if (Game.checkPlayer2Lose()) {
-                    gameOver(true);
+                    gameFinished(true, "He ran out of room!");
                 }
             }
 
