@@ -4,7 +4,7 @@ var MIN_DUPLICATE_SIZE = 2;
 var MIN_STRAIGHT_SIZE = 3;
 
 Crafty.scene("menu", function() {
-    var count=5000;
+    var count=180;
 
     var timeText = Crafty.e("2D, DOM, Text").attr({
         w : 2170,
