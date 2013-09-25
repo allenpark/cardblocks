@@ -1,7 +1,39 @@
-var MIN_CARD = 1;
-var MAX_CARD = 4;
+var MIN_CARD = 1;	
+var MAX_CARD = 9;
 var MIN_DUPLICATE_SIZE = 2;
 var MIN_STRAIGHT_SIZE = 3;
+
+var gameOver = function(youWon, message) {
+    Crafty("*").each(function() {
+        this.destroy();
+    });
+
+    var displayText = "GAME OVER";
+    if (youWon) {
+        displayText += " YOU WIN!";
+    } else {
+        displayText += " YOU LOSE!";
+    }
+    Crafty.e("2D, DOM, Text").attr({
+        w : 2170,
+        h : 400,
+        x : 300,
+        y : 450
+    }).text(displayText).textFont({
+        size : '40px'   
+    });
+	if (message) {
+        Crafty.e("2D, DOM, Text").attr({
+            w : 2170,
+            h : 400,
+            x : 400,
+            y : 500
+        }).text(message).textFont({
+            size : '40px'   
+        });
+    }
+};
+
 
 Crafty.scene("menu", function() {
     var count=180;
@@ -34,24 +66,11 @@ Crafty.scene("menu", function() {
         } else {
             timeText.text("time remaining: " + min + ": " + sec );
         }
-	if (min ==0 && sec == 0){
-	   // Crafty("2D").destroy();
-	    Crafty("*").each(function() {
-		this.destroy();
-	    });
-	    //Game.start();
-
-	     Crafty.e("2D, DOM, Text").attr({
-		 w : 2170,
-		 h : 400,
-		 x : 370,
-		 y : 450
-	     }).text("GAME OVER").textFont({
-		 size : '40px'   
-	     });
- 	}
+	    if (min ==0 && sec == 0) {
+            var message = "You: " + Game.player1points + " Him: " + Game.player2points;
+            gameOver(Game.player1points >= Game.player2points, message);
+        }
     }
-	
 
     timer();
     var titleText = Crafty.e("2D, DOM, Text").attr({
@@ -331,6 +350,22 @@ findLowestFreeCell: function(column) {
     }
     return -1;
 },
+checkPlayer1Lose: function() {
+    for (var x = 0; x < this.map_grid.player_width; x++) {
+        if (this.findLowestFreeCell(x) != -1) {
+            return false;
+        }
+    }
+    return true;
+},
+checkPlayer2Lose: function() {
+    for (var x = this.map_grid.player_width + 1; x < 2 * this.map_grid.player_width + 1; x++) {
+        if (this.findLowestFreeCell(x) != -1) {
+            return false;
+        }
+    }
+    return true;
+},
 refreshCursorPos: function() {
     leftMarker.x = this.map_grid.tile.width * this.player1pos + this.map_grid.tile.width / 3;
     leftMarker.y = this.map_grid.tile.height / 3 + this.map_grid.tile.height * this.findLowestFreeCell(this.player1pos);
@@ -385,36 +420,61 @@ start: function() {
         .bind("KeyDown", function(e) {
             if (e.keyCode == 37) {
                 if (Game.player1pos > 0) {
+                    var originalPos = Game.player1pos;
                     --Game.player1pos;
+                    while (Game.findLowestFreeCell(Game.player1pos) == -1) {
+                        --Game.player1pos;
+                        if (Game.player1pos < 0) {
+                            Game.player1pos = originalPos;
+                            break;
+                        }
+                    }
                     Game.refreshCursorPos();
                 }
             } else if (e.keyCode == 39) {
                 if (Game.player1pos < Game.map_grid.player_width-1) {
+                    var originalPos = Game.player1pos;
                     ++Game.player1pos;
+                    while (Game.findLowestFreeCell(Game.player1pos) == -1) {
+                        ++Game.player1pos;
+                        if (Game.player1pos >= Game.map_grid.player_width) {
+                            Game.player1pos = originalPos;
+                            break;
+                        }
+                    }
                     Game.refreshCursorPos();
                 }
-            } else if (Game.player1card != null && (e.keyCode == 32 || e.keyCode == 40)) {
+            } else if (Game.player1card != null && (e.keyCode == 32 || e.keyCode == 40) && Game.findLowestFreeCell(Game.player1pos) != -1) {
                 var dropPos = Game.dropCard(0);
 
                 Game.player1card = Game.createCard();
                 Game.player1card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
                 var block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
                 if (block) {
-					Game.player1points += block.points;
+                    Game.player1points += block.points;
                     Game.removeBlock(block);
                 }
-				//temporary AI code
-				Game.player2pos = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
-				Game.player2card = Game.createCard();
-				dropPos = Game.dropCard(1);
-				block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
+                //temporary AI code
+                Game.player2pos = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
+                while (Game.findLowestFreeCell(Game.player2pos + (Game.map_grid.player_width+1)) == -1) {
+                    Game.player2pos = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
+                }
+                Game.player2card = Game.createCard();
+                dropPos = Game.dropCard(1);
+                block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
                 if (block) {
-					Game.player2points += block.points;
+                    Game.player2points += block.points;
                     Game.removeBlock(block);
                 }
-				
+
                 Game.refreshCursorPos();
-				Game.updatePointsDisplay();
+                Game.updatePointsDisplay();
+                if (Game.checkPlayer1Lose()) {
+                    gameOver(false);
+                }
+                if (Game.checkPlayer2Lose()) {
+                    gameOver(true);
+                }
             }
 
         });
