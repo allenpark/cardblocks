@@ -282,7 +282,7 @@ removeBlock: function(block) {
 },
 makeBlocksFall: function() {
     var movedBlocks = [];
-    for (var x = 0; x < this.map_grid.player_width; x++) {
+    for (var x = 0; x < this.map_grid.width; x++) {
         var lowestFreeCell = this.findLowestFreeCell(x);
         for (var y = lowestFreeCell-1; y >= 0; y--) {
             if (this.map_grid.cards[x][y].value != -1) {
@@ -399,7 +399,6 @@ start: function() {
 				console.log(dropPos[0] + "," + dropPos[1]);
 				block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
                 if (block) {
-				console.log(block);
                     Game.removeBlock(block);
                 }
 				console.log(Game.map_grid.cards);
