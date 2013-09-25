@@ -4,7 +4,7 @@ var MIN_DUPLICATE_SIZE = 2;
 var MIN_STRAIGHT_SIZE = 3;
 
 Crafty.scene("menu", function() {
-    var count=5;
+    var count=5000;
 
     var timeText = Crafty.e("2D, DOM, Text").attr({
         w : 2170,
@@ -77,8 +77,8 @@ map_grid: {
 empty_card: {
     value: -1
 },
-player1pos: 0,
-player2pos: 0,
+player1pos: 0, // 0-5
+player2pos: 0, // 0-5
 player1card: null,
 player2card: null,
 player1points: 0,
@@ -128,6 +128,16 @@ dropCard: function(index) {
         this.map_grid.cards[column][row] = this.player1card;
         return [column, row];
     }
+	else {
+        var column = this.player2pos + (Game.map_grid.player_width+1);
+        var row = this.findLowestFreeCell(column);
+     
+        this.player2card.moveTo(column * this.map_grid.tile.width + 5,
+                                 row * this.map_grid.tile.height + 5);
+        this.map_grid.cards[column][row] = this.player2card;
+        return [column, row];
+	}
+		
     return [-1, -1];
 },
 calculatePoints: function(size, type) {
@@ -313,6 +323,9 @@ findLowestFreeCell: function(column) {
 refreshCursorPos: function() {
     leftMarker.x = this.map_grid.tile.width * this.player1pos + this.map_grid.tile.width / 3;
     leftMarker.y = this.map_grid.tile.height / 3 + this.map_grid.tile.height * this.findLowestFreeCell(this.player1pos);
+	
+    rightMarker.x = this.map_grid.tile.width * (this.player2pos + this.map_grid.player_width+1) + this.map_grid.tile.width / 3;
+    rightMarker.y = this.map_grid.tile.height / 3 + this.map_grid.tile.height * this.findLowestFreeCell(this.player2pos+this.map_grid.player_width+1);
 },
 
 
@@ -378,6 +391,19 @@ start: function() {
                 if (block) {
                     Game.removeBlock(block);
                 }
+				//temporary AI code
+				Game.player2pos = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
+				Game.player2card = Game.createCard();
+				console.log(Game.player2card.value);
+				dropPos = Game.dropCard(1);
+				console.log(dropPos[0] + "," + dropPos[1]);
+				block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
+                if (block) {
+				console.log(block);
+                    Game.removeBlock(block);
+                }
+				console.log(Game.map_grid.cards);
+				
                 Game.refreshCursorPos();
             }
 
