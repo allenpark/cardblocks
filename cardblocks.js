@@ -4,7 +4,7 @@ var MIN_DUPLICATE_SIZE = 2;
 var MIN_STRAIGHT_SIZE = 3;
 
 Crafty.scene("menu", function() {
-    var count=90;
+    var count=20;
 
     var timeText = Crafty.e("2D, DOM, Text").attr({
         w : 2170,
@@ -34,6 +34,23 @@ Crafty.scene("menu", function() {
         } else {
             timeText.text("time remaining: " + min + ": " + sec );
         }
+	if (min ==0 && sec == 0){
+	   // Crafty("2D").destroy();
+	    Crafty("*").each(function() {
+		this.destroy();
+	    });
+	    //Game.start();
+/*
+	     var timeText = Crafty.e("2D, DOM, Text").attr({
+		 w : 2170,
+		 h : 400,
+		 x : 370,
+		 y : 450
+	     }).text(").textFont({
+		 size : '40px'   
+	     });
+	*/
+ 	}
     }
 
     timer();
