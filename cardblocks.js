@@ -51,6 +51,7 @@ Crafty.scene("menu", function() {
 	     });
  	}
     }
+	
 
     timer();
     var titleText = Crafty.e("2D, DOM, Text").attr({
@@ -83,6 +84,8 @@ player1card: null,
 player2card: null,
 player1points: 0,
 player2points: 0,
+player1pointsText: null,
+player2pointsText: null,
 leftMarker: null,
 rightMarker: null,
 
@@ -146,6 +149,14 @@ calculatePoints: function(size, type) {
     } else if (type == 'straights') {
         return size + 1;
     }
+},
+updatePointsDisplay: function() {
+	Game.player1pointsText.text("P1 score: " + Game.player1points).textFont({
+        size : '16px'   
+    });
+	Game.player2pointsText.text("P2 score: " + Game.player2points).textFont({
+        size : '16px'   
+    });
 },
 checkCellForBlocks: function(cellX, cellY) {
     var cellContents = this.map_grid.cards[cellX][cellY].value;
@@ -335,7 +346,7 @@ start: function() {
     Crafty.init(Game.width(), Game.height());
     Crafty.background('green');
     Crafty.scene("menu");
-
+	
     for (var x = 0; x < Game.map_grid.width; x++) {
         Game.map_grid.cards.push(new Array());
         for (var y = 0; y < Game.map_grid.height; y++) {
@@ -389,21 +400,21 @@ start: function() {
                 Game.player1card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
                 var block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
                 if (block) {
+					Game.player1points += block.points;
                     Game.removeBlock(block);
                 }
 				//temporary AI code
 				Game.player2pos = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
 				Game.player2card = Game.createCard();
-				console.log(Game.player2card.value);
 				dropPos = Game.dropCard(1);
-				console.log(dropPos[0] + "," + dropPos[1]);
 				block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
                 if (block) {
+					Game.player2points += block.points;
                     Game.removeBlock(block);
                 }
-				console.log(Game.map_grid.cards);
 				
                 Game.refreshCursorPos();
+				Game.updatePointsDisplay();
             }
 
         });
@@ -417,6 +428,20 @@ start: function() {
     Crafty.e("2D, DOM, Text")
           .attr({x: Game.map_grid.tile.width, y:Game.map_grid.tile.height * 6 - 20, w: 100, h: 100 })
           .text('next card:');
+		  
+	Game.player1pointsText = Crafty.e("2D, DOM, Text").attr({
+		w : 2170,
+        h : 400,
+        x : 80,
+        y : 430
+	});
+	Game.player2pointsText = Crafty.e("2D, DOM, Text").attr({
+		w : 2170,
+        h : 400,
+        x : 880,
+        y : 430
+	});
+	Game.updatePointsDisplay();
 
     Game.player1card = Game.createCard();
     Game.player1card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
