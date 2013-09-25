@@ -4,7 +4,7 @@ var MIN_DUPLICATE_SIZE = 2;
 var MIN_STRAIGHT_SIZE = 3;
 
 Crafty.scene("menu", function() {
-    var count=20;
+    var count=5;
 
     var timeText = Crafty.e("2D, DOM, Text").attr({
         w : 2170,
@@ -40,16 +40,15 @@ Crafty.scene("menu", function() {
 		this.destroy();
 	    });
 	    //Game.start();
-/*
-	     var timeText = Crafty.e("2D, DOM, Text").attr({
+
+	     Crafty.e("2D, DOM, Text").attr({
 		 w : 2170,
 		 h : 400,
 		 x : 370,
 		 y : 450
-	     }).text(").textFont({
+	     }).text("GAME OVER").textFont({
 		 size : '40px'   
 	     });
-	*/
  	}
     }
 
@@ -264,8 +263,8 @@ removeBlock: function(block) {
             if (this.map_grid.cards[x][y].value == -1) {
                 console.log('Square (' + x + ', ' + y + ') was empty before being cleared.');
             }
-            this.map_grid.cards[x][y].text.removeComponent("DOM");
-            this.map_grid.cards[x][y].bg.removeComponent("DOM");
+            this.map_grid.cards[x][y].text.destroy();
+            this.map_grid.cards[x][y].bg.destroy();
             this.map_grid.cards[x][y] = this.empty_card;
         }
     }
