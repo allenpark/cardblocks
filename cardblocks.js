@@ -257,8 +257,16 @@ height: function() {
     return this.map_grid.height * this.map_grid.tile.height
         + 2*this.map_grid.tile.height;
 },
-
-
+printCards: function() {
+    for (var j=0; j<Game.map_grid.height; ++j) {
+	var s = "";
+	for (var i=0; i<Game.map_grid.width; ++i) {
+	    s += Game.map_grid.cards[i][j].value;
+	    if (i < Game.map_grid.width-1) s += ",";
+	}
+	console.log(s);
+    }
+},
 
 createCard: function() {
     var card = {};
@@ -281,6 +289,11 @@ createCard: function() {
     
     return card;
 },
+createWrapperCard: function(val) {
+    var card = {value: val};
+    return card;
+},
+
 dropCard: function(index) {
     if (index == 0) {
         var column = this.player1pos;
@@ -318,6 +331,32 @@ updatePointsDisplay: function() {
         size : '16px'   
     });
 },
+calculateNextAIMove: function() {
+    var toReturn = -1;
+    for (var i=0; i<Game.map_grid.player_width; ++i) {
+	// BAD BAD BAD ugly hack :(
+	if (toReturn != -1) break;
+
+	var tryColumn = Game.map_grid.player_width+1 + i;
+	var tryRow = this.findLowestFreeCell(tryColumn);
+	if (tryRow < 0) continue;
+
+	Game.map_grid.cards[tryColumn][tryRow] = Game.createWrapperCard(Game.player2card.value);
+	if (Game.checkCellForBlocks(tryColumn, tryRow) != null) {
+	    toReturn = tryColumn - (Game.map_grid.player_width+1);
+	}
+	Game.map_grid.cards[tryColumn][tryRow] = Game.empty_card;
+    }
+    if (toReturn == -1) {
+	toReturn = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
+	while (Game.findLowestFreeCell(toReturn + (Game.map_grid.player_width+1)) == -1) {
+	    toReturn = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
+	}
+    }
+    return toReturn;
+},
+	    
+	
 checkCellForBlocks: function(cellX, cellY) {
     var cellContents = this.map_grid.cards[cellX][cellY].value;
     var bestBlock = null;
@@ -479,8 +518,7 @@ makeBlocksFall: function() {
         this.removeBlock(largestBlock);
     }
     //this.refreshCursorPos();
-},
-            
+},            
     
         
 findLowestFreeCell: function(column) {
@@ -612,6 +650,15 @@ start: function() {
                 var block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
                 if (block) {
                     Game.player1points += block.points;
+                    Game.removeBlock(block);
+                }
+                Game.player2card = Game.createCard();
+		Game.player2pos = Game.calculateNextAIMove();
+
+                dropPos = Game.dropCard(1);
+                block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
+                if (block) {
+                    Game.player2points += block.points;
                     Game.removeBlock(block);
                 }
 
