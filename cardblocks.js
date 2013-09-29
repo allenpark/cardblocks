@@ -157,7 +157,6 @@ createCard: function() {
                       .attr({ x: 10, y:10, })
                       .text(card.value).textFont({
               size : '25px' });
-                //TODO: figure out how to make the text larger
     card.moveTo = function(x, y) { this.bg.x = x; this.bg.y = y; };
     
     card.bg.attach(card.text);
@@ -485,13 +484,14 @@ start: function() {
                 while (Game.findLowestFreeCell(Game.player2pos + (Game.map_grid.player_width+1)) == -1) {
                     Game.player2pos = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
                 }
-                Game.player2card = Game.createCard();
                 dropPos = Game.dropCard(1);
                 block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
                 if (block) {
                     Game.player2points += block.points;
                     Game.removeBlock(block);
                 }
+                Game.player2card = Game.createCard();
+                Game.player2card.moveTo((Game.map_grid.player_width + 5) * Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
 
                 Game.refreshCursorPos();
                 Game.updatePointsDisplay();
@@ -517,6 +517,12 @@ start: function() {
          size : '15px'   
          });
           
+    Crafty.e("2D, DOM, Text")
+          .attr({x: (Game.map_grid.player_width + 5) * Game.map_grid.tile.width, y:Game.map_grid.tile.height * 6 - 20, w: 100, h: 100 })
+        .text('next card:').textFont({
+         size : '15px'   
+         });
+          
     Game.player1pointsText = Crafty.e("2D, DOM, Text").attr({
         w : 2170,
         h : 400,
@@ -533,6 +539,8 @@ start: function() {
 
     Game.player1card = Game.createCard();
     Game.player1card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
+    Game.player2card = Game.createCard();
+    Game.player2card.moveTo((Game.map_grid.player_width + 5) * Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
 }
 };
 window.addEventListener('load', Game.start);
