@@ -166,10 +166,11 @@ player1points: 0,
 player2points: 0,
 player1pointsText: null,
 player2pointsText: null,
+currentPlayer: 0, // used for block clearing and sending
 leftMarker: null,
 rightMarker: null,
-originalCount: 5,
-count: 5,
+originalCount: 180,
+count: 180,
 counter: null,
 MIN_CARD: 1,
 MAX_CARD: 9,
@@ -273,6 +274,9 @@ createCard: function(val) {
     var card = {};
     if (val == -1) {
 	card.value = Crafty.math.randomInt(this.MIN_CARD, this.MAX_CARD);
+    }
+    else {
+	card.value = val;
     }
     card.bg = Crafty.e("Card, 2D, DOM, Color")
                     .color('rgb(255, 255, 255)')
@@ -480,13 +484,13 @@ checkCellForBlocks: function(cellX, cellY) {
             bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, anchor1: cellContents + (cellY - bottomY), anchor2: cellContents - (topY - cellY), type: type, points: points};
         }
     }
-    console.log(bestBlock);
     return bestBlock;
 },
-removeBlock: function(block) {
+removeBlock: function(player, block) {
     if (!block) {
         return;
     }
+    Game.transferBlock(player, block);
     for (var x = block.bottomX; x <= block.topX; x++) {
         for (var y = block.bottomY; y <= block.topY; y++) {
             if (this.map_grid.cards[x][y].value == -1) {
@@ -517,6 +521,7 @@ transferBlock: function(player, block) {
 	var valid = [];
 	var sign = 1;
 	if (block.anchor1 < block.anchor2) sign = -1;
+	else if (block.anchor1 == block.anchor2) sign = 0;
 
 	for (var i=0; i<Game.map_grid.player_width; ++i) {
 	    var row = Game.findLowestFreeCell(i + offset);
@@ -530,10 +535,15 @@ transferBlock: function(player, block) {
 	else {
 	    dropLocation = 0;
 	}
-	for (var i=block.bottomX; i>=block.topX; --i) {
-	    assignCard(1 - player, createCard(anchor2 + sign * (block.bottomX - i)));
+	var cardHold = Game.player2card;
+	if (player == 1) cardHold = Game.player1card;
+
+	for (var i=block.topY; i>=block.bottomY; --i) {
+	    console.log(i);
+	    Game.assignCard(1 - player, Game.createCard(block.anchor2 + sign * (block.topY - i)));
 	    Game.dropCard(1 - player, dropLocation);
 	}
+	Game.assignCard(1 - player, cardHold);
     }
     else {
 	//panic
@@ -564,7 +574,10 @@ makeBlocksFall: function() {
         }
     }
     if (largestBlock) {
-        this.removeBlock(largestBlock);
+	var player = 0;
+	if (largestBlock.bottomX < Game.player_width) player = 1;
+
+        this.removeBlock(player, largestBlock);
     }
     //this.refreshCursorPos();
 },            
@@ -608,7 +621,7 @@ AImove: function() {
     block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
     if (block) {
         Game.player2points += block.points;
-        Game.removeBlock(block);
+        Game.removeBlock(1, block);
 
     }
     Game.player2card = Game.createCard(-1);
@@ -707,7 +720,7 @@ start: function() {
                 var block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
                 if (block) {
                     Game.player1points += block.points;
-                    Game.removeBlock(block);
+                    Game.removeBlock(0, block);
                 }
 
                 Game.refreshCursorPos();
