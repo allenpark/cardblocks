@@ -153,7 +153,7 @@ var gameFinished = function(youWon, message) {
     });
  
 };
-    var originalCount = 180;
+    var originalCount = 5;
     var count = originalCount;
 
     var timeText = Crafty.e("2D, DOM, Text").attr({
@@ -168,7 +168,7 @@ var gameFinished = function(youWon, message) {
     function timer()
     {
         count = count - 1;
-        if (count <= 0 || gameOver)
+        if (count < 0 || gameOver)
         {
             clearInterval(counter);
             return;
