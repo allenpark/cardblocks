@@ -100,14 +100,42 @@ var Screen = {
 };
 
 Crafty.scene("game", function() {
-var MIN_CARD = 1;
-var MAX_CARD = 9;
-var MIN_DUPLICATE_SIZE = 2;
-var MIN_STRAIGHT_SIZE = 3;
-var gameOver = false;
+var Game = {
+map_grid: {
+    height: 5,
+    player_width: 6,
+    width: 13, // player_width * 2 + 1
+    tile: {
+        width:  80,
+        height: 80
+    },
+    cards: [[]],
+},
+empty_card: {
+    value: -1
+},
+player1pos: 0, // 0 to map_grid.player_width-1
+player2pos: 0, // 0 to map_grid.player_width-1
+player1card: null,
+player2card: null,
+player1points: 0,
+player2points: 0,
+player1pointsText: null,
+player2pointsText: null,
+leftMarker: null,
+rightMarker: null,
+originalCount: 5,
+count: 5,
+counter: null,
+MIN_CARD: 1,
+MAX_CARD: 9,
+MIN_DUPLICATE_SIZE: 2,
+MIN_STRAIGHT_SIZE: 3,
+timeText: null,
+gameOver: false,
 
-var gameFinished = function(youWon, message) {
-    gameOver = true;
+gameFinished: function(youWon, message) {
+    this.gameOver = true;
     Crafty("*").each(function() {
         this.destroy();
     });
@@ -152,73 +180,32 @@ var gameFinished = function(youWon, message) {
         }
     });
  
-};
-    var originalCount = 5;
-    var count = originalCount;
+},
 
-    var timeText = Crafty.e("2D, DOM, Text").attr({
-        w : 2170,
-        h : 400,
-        x : 370,
-        y : 450
-    }).text(count).textFont({
-        size : '40px'   
-    });
-
-    function timer()
+timer: function()
+{
+    this.count = this.count - 1;
+    if (this.count < 0 || this.gameOver)
     {
-        count = count - 1;
-        if (count < 0 || gameOver)
-        {
-            clearInterval(counter);
-            return;
-        }
-        var min = Math.floor(count / 60);
-        var sec = count % 60;
-        if (sec < 10)
-        {
-            timeText.text("time remaining: " + min + ": " + "0" + sec );
-        } else {
-            timeText.text("time remaining: " + min + ": " + sec );
-        }
-        if (min == 0 && sec == 0) {
-            var message = "You: " + Game.player1points + " Him: " + Game.player2points;
-            gameFinished(Game.player1points >= Game.player2points, message);
-        }
-        if (count < originalCount && count % 2 == 0) {
-            Game.AImove();
-        }
+        clearInterval(this.counter);
+        return;
     }
-
-    var counter=setInterval(timer, 1000); //1000 will run it every 1 second
-    count++; // Makes the count start at the original count.
-    timer();
-
-var Game = {
-map_grid: {
-    height: 5,
-    player_width: 6,
-    width: 13, // player_width * 2 + 1
-    tile: {
-        width:  80,
-        height: 80
-    },
-    cards: [[]],
+    var min = Math.floor(this.count / 60);
+    var sec = this.count % 60;
+    if (sec < 10)
+    {
+        this.timeText.text("time remaining: " + min + ": " + "0" + sec );
+    } else {
+        this.timeText.text("time remaining: " + min + ": " + sec );
+    }
+    if (min == 0 && sec == 0) {
+        var message = "You: " + Game.player1points + " Him: " + Game.player2points;
+        this.gameFinished(Game.player1points >= Game.player2points, message);
+    }
+    if (this.count < this.originalCount && this.count % 2 == 0 && !this.gameOver) {
+        this.AImove();
+    }
 },
-empty_card: {
-    value: -1
-},
-player1pos: 0, // 0-5
-player2pos: 0, // 0-5
-player1card: null,
-player2card: null,
-player1points: 0,
-player2points: 0,
-player1pointsText: null,
-player2pointsText: null,
-leftMarker: null,
-rightMarker: null,
-
 width: function() {
     return this.map_grid.width * this.map_grid.tile.width;
 },
@@ -240,7 +227,7 @@ printCards: function() {
 
 createCard: function() {
     var card = {};
-    card.value = Crafty.math.randomInt(MIN_CARD, MAX_CARD);
+    card.value = Crafty.math.randomInt(this.MIN_CARD, this.MAX_CARD);
     card.bg = Crafty.e("Card, 2D, DOM, Color")
                     .color('rgb(255, 255, 255)')
                     .attr({ x: 0,
@@ -343,7 +330,7 @@ checkCellForBlocks: function(cellX, cellY) {
         topX ++;
     }
     topX --; // This is the top contiguous x that matches cellContents.
-    if (topX - bottomX + 1 >= MIN_DUPLICATE_SIZE) {
+    if (topX - bottomX + 1 >= this.MIN_DUPLICATE_SIZE) {
         var points = this.calculatePoints(topX - bottomX + 1, type);
         if (!bestBlock || points >= bestBlock.points) {
             bestBlock = {bottomX: bottomX, bottomY: cellY, topX: topX, topY: cellY, type: type, points: points};
@@ -361,7 +348,7 @@ checkCellForBlocks: function(cellX, cellY) {
         topY ++;
     }
     topY --; // This is the top contiguous y that matches cellContents.
-    if (topY - bottomY + 1 >= MIN_DUPLICATE_SIZE) {
+    if (topY - bottomY + 1 >= this.MIN_DUPLICATE_SIZE) {
         var points = this.calculatePoints(topY - bottomY + 1, type);
         if (!bestBlock || points >= bestBlock.points) {
             bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, type: type, points: points};
@@ -381,7 +368,7 @@ checkCellForBlocks: function(cellX, cellY) {
         topX ++;
     }
     topX --; // This is the top contiguous x that matches cellContents.
-    if (topX - bottomX + 1 >= MIN_STRAIGHT_SIZE) {
+    if (topX - bottomX + 1 >= this.MIN_STRAIGHT_SIZE) {
         var points = this.calculatePoints(topX - bottomX + 1, type);
         if (!bestBlock || points >= bestBlock.points) {
             bestBlock = {bottomX: bottomX, bottomY: cellY, topX: topX, topY: cellY, type: type, points: points};
@@ -399,7 +386,7 @@ checkCellForBlocks: function(cellX, cellY) {
         topX ++;
     }
     topX --; // This is the top contiguous x that matches cellContents.
-    if (topX - bottomX + 1 >= MIN_STRAIGHT_SIZE) {
+    if (topX - bottomX + 1 >= this.MIN_STRAIGHT_SIZE) {
         var points = this.calculatePoints(topX - bottomX + 1, type);
         if (!bestBlock || points >= bestBlock.points) {
             bestBlock = {bottomX: bottomX, bottomY: cellY, topX: topX, topY: cellY, type: type, points: points};
@@ -417,7 +404,7 @@ checkCellForBlocks: function(cellX, cellY) {
         topY ++;
     }
     topY --; // This is the top contiguous y that matches cellContents.
-    if (topY - bottomY + 1 >= MIN_STRAIGHT_SIZE) {
+    if (topY - bottomY + 1 >= this.MIN_STRAIGHT_SIZE) {
         var points = this.calculatePoints(topX - bottomX + 1, type);
         if (!bestBlock || points >= bestBlock.points) {
             bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, type: type, points: points};
@@ -435,7 +422,7 @@ checkCellForBlocks: function(cellX, cellY) {
         topY ++;
     }
     topY --; // This is the top contiguous y that matches cellContents.
-    if (topY - bottomY + 1 >= MIN_STRAIGHT_SIZE) {
+    if (topY - bottomY + 1 >= this.MIN_STRAIGHT_SIZE) {
         var points = this.calculatePoints(topY - bottomY + 1, type);
         if (!bestBlock || points >= bestBlock.points) {
             bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, type: type, points: points};
@@ -575,6 +562,16 @@ start: function() {
             }
         }
     }
+    this.timeText = Crafty.e("2D, DOM, Text").attr({
+        w : 2170,
+        h : 400,
+        x : 370,
+        y : 450
+    }).text(this.count).textFont({
+        size : '40px'   
+    });
+    this.count = this.originalCount;
+
     
     this.leftMarker = Crafty.e("LeftMarker, 2D, DOM, Color")
         .color('rgb(0,255,255)')
@@ -665,6 +662,10 @@ start: function() {
     Game.player1card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
     Game.player2card = Game.createCard();
     Game.player2card.moveTo((Game.map_grid.player_width + 5) * Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
+
+    this.counter=setInterval(this.timer.bind(this), 1000); //1000 will run it every 1 second
+    this.count++; // Makes the count start at the original count.
+    this.timer();
 }
 };
 
