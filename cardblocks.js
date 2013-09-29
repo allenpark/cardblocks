@@ -406,6 +406,7 @@ AImove: function() {
     }
     dropPos = Game.dropCard(1);
     block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
+    console.log(block);
     if (block) {
         Game.player2points += block.points;
         Game.removeBlock(block);
@@ -415,6 +416,8 @@ AImove: function() {
     if (Game.checkPlayer2Lose()) {
         gameFinished(true, "He ran out of room!");
     }
+    Game.refreshCursorPos();
+    Game.updatePointsDisplay();
 },
 
 
