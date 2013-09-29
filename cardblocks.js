@@ -246,7 +246,7 @@ timer: function()
         var message = "You: " + Game.player1points + " Him: " + Game.player2points;
         this.gameFinished(Game.player1points >= Game.player2points, message);
     }
-    if (this.count < this.originalCount && this.count % 2 == 0) {
+    if (this.count < this.originalCount && this.count % 2 == 0 && !this.gameOver) {
         this.AImove();
     }
 },
@@ -295,9 +295,9 @@ createWrapperCard: function(val) {
     return card;
 },
 
-dropCard: function(index) {
+dropCard: function(index, pos) {
     if (index == 0) {
-        var column = this.player1pos;
+        var column = pos;
         var row = this.findLowestFreeCell(column);
      
         this.player1card.moveTo(column * this.map_grid.tile.width + 5,
@@ -306,7 +306,7 @@ dropCard: function(index) {
         return [column, row];
     }
     else {
-        var column = this.player2pos + (Game.map_grid.player_width+1);
+        var column = pos + (Game.map_grid.player_width+1);
         var row = this.findLowestFreeCell(column);
      
         this.player2card.moveTo(column * this.map_grid.tile.width + 5,
@@ -359,6 +359,9 @@ calculateNextAIMove: function() {
 	    
 	
 checkCellForBlocks: function(cellX, cellY) {
+    // 'anchor1' and 'anchor2' denote the two numbers at each edge of the block.
+    // this is used to help with transferring blocks to the other player's grid.
+
     var cellContents = this.map_grid.cards[cellX][cellY].value;
     var bestBlock = null;
     var type = 'duplicates';
@@ -377,7 +380,7 @@ checkCellForBlocks: function(cellX, cellY) {
     if (topX - bottomX + 1 >= this.MIN_DUPLICATE_SIZE) {
         var points = this.calculatePoints(topX - bottomX + 1, type);
         if (!bestBlock || points >= bestBlock.points) {
-            bestBlock = {bottomX: bottomX, bottomY: cellY, topX: topX, topY: cellY, type: type, points: points};
+            bestBlock = {bottomX: bottomX, bottomY: cellY, topX: topX, topY: cellY, anchor1: cellContents, anchor2: cellContents, type: type, points: points};
         }
     }
 
@@ -395,7 +398,7 @@ checkCellForBlocks: function(cellX, cellY) {
     if (topY - bottomY + 1 >= this.MIN_DUPLICATE_SIZE) {
         var points = this.calculatePoints(topY - bottomY + 1, type);
         if (!bestBlock || points >= bestBlock.points) {
-            bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, type: type, points: points};
+            bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, anchor1: cellContents, anchor2: cellContents, type: type, points: points};
         }
     }
 
@@ -415,7 +418,7 @@ checkCellForBlocks: function(cellX, cellY) {
     if (topX - bottomX + 1 >= this.MIN_STRAIGHT_SIZE) {
         var points = this.calculatePoints(topX - bottomX + 1, type);
         if (!bestBlock || points >= bestBlock.points) {
-            bestBlock = {bottomX: bottomX, bottomY: cellY, topX: topX, topY: cellY, type: type, points: points};
+            bestBlock = {bottomX: bottomX, bottomY: cellY, topX: topX, topY: cellY, anchor1: cellContents - (cellX - bottomX), anchor2: cellContents + (topX - cellX), type: type, points: points};
         }
     }
 
@@ -433,7 +436,7 @@ checkCellForBlocks: function(cellX, cellY) {
     if (topX - bottomX + 1 >= this.MIN_STRAIGHT_SIZE) {
         var points = this.calculatePoints(topX - bottomX + 1, type);
         if (!bestBlock || points >= bestBlock.points) {
-            bestBlock = {bottomX: bottomX, bottomY: cellY, topX: topX, topY: cellY, type: type, points: points};
+            bestBlock = {bottomX: bottomX, bottomY: cellY, topX: topX, topY: cellY, anchor1: cellContents + (cellX - bottomX), anchor2: cellContents - (topX - cellX), type: type, points: points};
         }
     }
 
@@ -451,7 +454,7 @@ checkCellForBlocks: function(cellX, cellY) {
     if (topY - bottomY + 1 >= this.MIN_STRAIGHT_SIZE) {
         var points = this.calculatePoints(topX - bottomX + 1, type);
         if (!bestBlock || points >= bestBlock.points) {
-            bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, type: type, points: points};
+            bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, anchor1: cellContents - (cellY - bottomY), anchor2: cellContents + (topY - cellY), type: type, points: points};
         }
     }
 
@@ -469,10 +472,10 @@ checkCellForBlocks: function(cellX, cellY) {
     if (topY - bottomY + 1 >= this.MIN_STRAIGHT_SIZE) {
         var points = this.calculatePoints(topY - bottomY + 1, type);
         if (!bestBlock || points >= bestBlock.points) {
-            bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, type: type, points: points};
+            bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, anchor1: cellContents + (cellY - bottomY), anchor2: cellContents - (topY - cellY), type: type, points: points};
         }
     }
-
+    console.log(bestBlock);
     return bestBlock;
 },
 removeBlock: function(block) {
@@ -490,6 +493,43 @@ removeBlock: function(block) {
         }
     }
     this.makeBlocksFall();
+},
+transferBlock: function(player, block) {
+    //this method relies on the assumption that blocks are always straight lines.
+    //but then again, so does checkCellForBlocks
+
+    if (!block) {
+	return;
+    }
+
+    var offset = player * (Game.map_grid.player_width + 1);
+    var dropLocation = 0;
+
+    if (block.bottomY == block.topY) {
+	
+    }
+    else if (block.bottomX == block.topX) {
+	var valid = [];
+	var sign = 1;
+	if (block.anchor1 < block.anchor2) sign = -1;
+
+	for (var i=0; i<Game.map_grid.player_width; ++i) {
+	    var row = Game.findLowestFreeCell(i + offset);
+	    if (row - (block.topY - block.bottomY) >= 0) {
+		valid.push(i);
+	    }
+	}
+	if (valid.length > 0) {
+	    dropLocation = valid[Crafty.math.randomInt(0, valid.length-1)];
+	}
+	else {
+	    dropLocation = offset;
+	}
+	Game.dropCard(1 - player, 0);
+    }
+    else {
+	//panic
+    }
 },
 makeBlocksFall: function() {
     var movedBlocks = [];
@@ -556,11 +596,12 @@ refreshCursorPos: function() {
 AImove: function() {
     //temporary AI code
     Game.player2pos = Game.calculateNextAIMove();
-    dropPos = Game.dropCard(1);
+    dropPos = Game.dropCard(1, Game.player2pos);
     block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
     if (block) {
         Game.player2points += block.points;
         Game.removeBlock(block);
+
     }
     Game.player2card = Game.createCard();
     Game.player2card.moveTo((Game.map_grid.player_width + 5) * Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
@@ -651,7 +692,7 @@ start: function() {
                     Game.refreshCursorPos();
                 }
             } else if (Game.player1card != null && (e.keyCode == 32 || e.keyCode == 40) && Game.findLowestFreeCell(Game.player1pos) != -1) {
-                var dropPos = Game.dropCard(0);
+                var dropPos = Game.dropCard(0, Game.player1pos);
 
                 Game.player1card = Game.createCard();
                 Game.player1card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
