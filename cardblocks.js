@@ -554,10 +554,7 @@ refreshCursorPos: function() {
 },
 AImove: function() {
     //temporary AI code
-    Game.player2pos = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
-    while (Game.findLowestFreeCell(Game.player2pos + (Game.map_grid.player_width+1)) == -1) {
-        Game.player2pos = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
-    }
+    Game.player2pos = Game.calculateNextAIMove();
     dropPos = Game.dropCard(1);
     block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
     if (block) {
@@ -652,8 +649,6 @@ start: function() {
                     Game.player1points += block.points;
                     Game.removeBlock(block);
                 }
-                Game.player2card = Game.createCard();
-		Game.player2pos = Game.calculateNextAIMove();
 
                 dropPos = Game.dropCard(1);
                 block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
