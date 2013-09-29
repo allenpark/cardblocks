@@ -447,6 +447,40 @@ removeBlock: function(block) {
     }
     this.makeBlocksFall();
 },
+transferBlock: function(player, block) {
+    //this method relies on the assumption that blocks are always straight lines.
+    //but then again, so does checkCellForBlocks
+
+    if (!block) {
+	return;
+    }
+
+    var offset = player * (Game.map_grid.player_width + 1);
+    var dropLocation = 0;
+
+    if (bottomY == topY) {
+	
+    }
+    else if (bottomX == topX) {
+	var valid = [];
+	for (var i=0; i<Game.map_grid.player_width; ++i) {
+	    var row = Game.findLowestFreeCell(i + offset);
+	    if (row - (topY - bottomY) >= 0) {
+		valid.push(i);
+	    }
+	}
+	if (valid.length > 0) {
+	    dropLocation = valid[Crafty.math.randomInt(0, valid.length-1)];
+	}
+	else {
+	    dropLocation = offset;
+	}
+	
+    }
+    else {
+	//panic
+    }
+},
 makeBlocksFall: function() {
     var movedBlocks = [];
     for (var x = 0; x < this.map_grid.width; x++) {
@@ -517,6 +551,7 @@ AImove: function() {
     if (block) {
         Game.player2points += block.points;
         Game.removeBlock(block);
+
     }
     Game.player2card = Game.createCard();
     Game.player2card.moveTo((Game.map_grid.player_width + 5) * Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
