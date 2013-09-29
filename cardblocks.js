@@ -620,13 +620,6 @@ start: function() {
                     Game.removeBlock(block);
                 }
 
-                dropPos = Game.dropCard(1);
-                block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
-                if (block) {
-                    Game.player2points += block.points;
-                    Game.removeBlock(block);
-                }
-
                 Game.refreshCursorPos();
                 Game.updatePointsDisplay();
                 if (Game.checkPlayer1Lose()) {
