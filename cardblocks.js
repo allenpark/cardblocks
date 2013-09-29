@@ -178,7 +178,7 @@ playagain.bind('MouseUp', function(e) {
 //
 
 
-    var originalCount = 300;
+    var originalCount = 180;
     var count = originalCount;
 
     var timeText = Crafty.e("2D, DOM, Text").attr({
@@ -508,11 +508,11 @@ checkPlayer2Lose: function() {
     return true;
 },
 refreshCursorPos: function() {
-    leftMarker.x = this.map_grid.tile.width * this.player1pos + this.map_grid.tile.width / 3;
-    leftMarker.y = this.map_grid.tile.height / 3 + this.map_grid.tile.height * this.findLowestFreeCell(this.player1pos);
+    this.leftMarker.x = this.map_grid.tile.width * this.player1pos + this.map_grid.tile.width / 3;
+    this.leftMarker.y = this.map_grid.tile.height / 3 + this.map_grid.tile.height * this.findLowestFreeCell(this.player1pos);
     
-    rightMarker.x = this.map_grid.tile.width * (this.player2pos + this.map_grid.player_width+1) + this.map_grid.tile.width / 3;
-    rightMarker.y = this.map_grid.tile.height / 3 + this.map_grid.tile.height * this.findLowestFreeCell(this.player2pos+this.map_grid.player_width+1);
+    this.rightMarker.x = this.map_grid.tile.width * (this.player2pos + this.map_grid.player_width+1) + this.map_grid.tile.width / 3;
+    this.rightMarker.y = this.map_grid.tile.height / 3 + this.map_grid.tile.height * this.findLowestFreeCell(this.player2pos+this.map_grid.player_width+1);
 },
 AImove: function() {
     //temporary AI code
@@ -522,7 +522,6 @@ AImove: function() {
     }
     dropPos = Game.dropCard(1);
     block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
-    console.log(block);
     if (block) {
         Game.player2points += block.points;
         Game.removeBlock(block);
