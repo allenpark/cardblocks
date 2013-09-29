@@ -199,6 +199,9 @@ updatePointsDisplay: function() {
         size : '16px'   
     });
 },
+calculateNextMove: function() {
+    for (i=0; i<Game.player_width; ++i) {
+	
 checkCellForBlocks: function(cellX, cellY) {
     var cellContents = this.map_grid.cards[cellX][cellY].value;
     var bestBlock = null;
@@ -360,8 +363,7 @@ makeBlocksFall: function() {
         this.removeBlock(largestBlock);
     }
     //this.refreshCursorPos();
-},
-            
+},            
     
         
 findLowestFreeCell: function(column) {
