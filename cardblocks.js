@@ -315,6 +315,9 @@ calculateNextAIMove: function() {
 	    
 	
 checkCellForBlocks: function(cellX, cellY) {
+    // 'anchor1' and 'anchor2' denote the two numbers at each edge of the block.
+    // this is used to help with transferring blocks to the other player's grid.
+
     var cellContents = this.map_grid.cards[cellX][cellY].value;
     var bestBlock = null;
     var type = 'duplicates';
@@ -333,7 +336,7 @@ checkCellForBlocks: function(cellX, cellY) {
     if (topX - bottomX + 1 >= this.MIN_DUPLICATE_SIZE) {
         var points = this.calculatePoints(topX - bottomX + 1, type);
         if (!bestBlock || points >= bestBlock.points) {
-            bestBlock = {bottomX: bottomX, bottomY: cellY, topX: topX, topY: cellY, type: type, points: points};
+            bestBlock = {bottomX: bottomX, bottomY: cellY, topX: topX, topY: cellY, anchor1: cellContents, anchor2: cellContents, type: type, points: points};
         }
     }
 
@@ -351,7 +354,7 @@ checkCellForBlocks: function(cellX, cellY) {
     if (topY - bottomY + 1 >= this.MIN_DUPLICATE_SIZE) {
         var points = this.calculatePoints(topY - bottomY + 1, type);
         if (!bestBlock || points >= bestBlock.points) {
-            bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, type: type, points: points};
+            bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, anchor1: cellContents, anchor2: cellContents, type: type, points: points};
         }
     }
 
@@ -371,7 +374,7 @@ checkCellForBlocks: function(cellX, cellY) {
     if (topX - bottomX + 1 >= this.MIN_STRAIGHT_SIZE) {
         var points = this.calculatePoints(topX - bottomX + 1, type);
         if (!bestBlock || points >= bestBlock.points) {
-            bestBlock = {bottomX: bottomX, bottomY: cellY, topX: topX, topY: cellY, type: type, points: points};
+            bestBlock = {bottomX: bottomX, bottomY: cellY, topX: topX, topY: cellY, anchor1: cellContents - (cellX - bottomX), anchor2: cellContents + (topX - cellX), type: type, points: points};
         }
     }
 
@@ -389,7 +392,7 @@ checkCellForBlocks: function(cellX, cellY) {
     if (topX - bottomX + 1 >= this.MIN_STRAIGHT_SIZE) {
         var points = this.calculatePoints(topX - bottomX + 1, type);
         if (!bestBlock || points >= bestBlock.points) {
-            bestBlock = {bottomX: bottomX, bottomY: cellY, topX: topX, topY: cellY, type: type, points: points};
+            bestBlock = {bottomX: bottomX, bottomY: cellY, topX: topX, topY: cellY, anchor1: cellContents + (cellX - bottomX), anchor2: cellContents - (topX - cellX), type: type, points: points};
         }
     }
 
@@ -407,7 +410,7 @@ checkCellForBlocks: function(cellX, cellY) {
     if (topY - bottomY + 1 >= this.MIN_STRAIGHT_SIZE) {
         var points = this.calculatePoints(topX - bottomX + 1, type);
         if (!bestBlock || points >= bestBlock.points) {
-            bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, type: type, points: points};
+            bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, anchor1: cellContents - (cellY - bottomY), anchor2: cellContents + (topY - cellY), type: type, points: points};
         }
     }
 
@@ -425,10 +428,10 @@ checkCellForBlocks: function(cellX, cellY) {
     if (topY - bottomY + 1 >= this.MIN_STRAIGHT_SIZE) {
         var points = this.calculatePoints(topY - bottomY + 1, type);
         if (!bestBlock || points >= bestBlock.points) {
-            bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, type: type, points: points};
+            bestBlock = {bottomY: bottomY, bottomX: cellX, topY: topY, topX: cellX, anchor1: cellContents + (cellY - bottomY), anchor2: cellContents - (topY - cellY), type: type, points: points};
         }
     }
-
+    console.log(bestBlock);
     return bestBlock;
 },
 removeBlock: function(block) {
@@ -475,7 +478,6 @@ transferBlock: function(player, block) {
 	else {
 	    dropLocation = offset;
 	}
-	
     }
     else {
 	//panic
