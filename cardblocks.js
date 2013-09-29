@@ -1,3 +1,118 @@
+Crafty.scene("title", function() {
+ Crafty.background('blue');
+    var nameText = Crafty.e("2D, DOM, Text").attr({
+		 w : 2170,
+		 h : 400,
+		 x : 300,
+		 y : 0
+	     }).text("Card Blocks").textFont({
+		 size : '40px'   
+	     });
+
+ var startText = Crafty.e("2D, DOM, Text, Mouse").attr({
+		 w : 2170,
+		 h : 400,
+		 x : 370,
+		 y : 150
+	     }).text("Start").textFont({
+		 size : '40px'   
+	     });
+
+ var eText = Crafty.e("2D, DOM, Text, Mouse").attr({
+		 w : 2170,
+		 h : 400,
+		 x : 370,
+		 y : 300
+	     }).text("Exit").textFont({
+		 size : '40px'   
+	     });
+
+startText.bind('MouseDown', function(e) {
+    if( e.mouseButton == Crafty.mouseButtons.LEFT ){
+	Crafty.scene("game");
+    }
+
+
+});
+
+eText.bind('MouseDown', function(g) {
+    if( g.mouseButton == Crafty.mouseButtons.LEFT){
+	Crafty("*").each(function() {
+		this.destroy();
+	});
+	 var tText = Crafty.e("2D, DOM, Text, Mouse").attr({
+		 w : 2170,
+		 h : 400,
+		 x : 100,
+		 y : 0
+	     }).text("Thanks for Playing our Crafty Game").textFont({
+		 size : '40px'   
+	     });
+ var tText = Crafty.e("2D, DOM, Text, Mouse").attr({
+		 w : 2170,
+		 h : 400,
+		 x : 370,
+		 y : 150
+	     }).text("Creators:").textFont({
+		 size : '40px'   
+	     });
+
+ var wText = Crafty.e("2D, DOM, Text, Mouse").attr({
+		 w : 2170,
+		 h : 400,
+		 x : 370,
+		 y : 200
+	     }).text("Allen Park").textFont({
+		 size : '40px'   
+	     });
+
+ var xText = Crafty.e("2D, DOM, Text, Mouse").attr({
+		 w : 2170,
+		 h : 400,
+		 x : 370,
+		 y : 250
+	     }).text("Nathan Pinsker").textFont({
+		 size : '40px'   
+	     });
+
+ var yText = Crafty.e("2D, DOM, Text, Mouse").attr({
+		 w : 2170,
+		 h : 400,
+		 x : 370,
+		 y : 300
+	     }).text("Skyler Seto").textFont({
+		 size : '40px'   
+	     });
+
+	
+
+    }
+
+
+});
+
+
+});
+
+var Screen = {
+  start: function() {
+    Crafty.init(780, 540);
+  Crafty.scene("title");
+
+
+	     
+  }
+};
+
+
+
+
+
+Crafty.scene("game", function() {
+
+//
+//
+
 var MIN_CARD = 1;	
 var MAX_CARD = 9;
 var MIN_DUPLICATE_SIZE = 2;
@@ -55,8 +170,16 @@ playagain.bind('MouseUp', function(e) {
 };
 
 
-Crafty.scene("menu", function() {
-    var count=300;
+
+
+
+
+//
+//
+
+
+    var originalCount = 300;
+    var count = originalCount;
 
     var timeText = Crafty.e("2D, DOM, Text").attr({
         w : 2170,
@@ -69,41 +192,38 @@ Crafty.scene("menu", function() {
 
     function timer()
     {
-        count=count-1;
+        count = count - 1;
         if (count <= 0 || gameOver)
         {
             clearInterval(counter);
             return;
         }
-        var min =Math.floor(count/60);
-        var sec =  count%60
-        if (sec<10)
+        var min = Math.floor(count / 60);
+        var sec = count % 60;
+        if (sec < 10)
         {
             timeText.text("time remaining: " + min + ": " + "0" + sec );
         } else {
             timeText.text("time remaining: " + min + ": " + sec );
         }
-        if (min ==0 && sec == 0) {
+        if (min == 0 && sec == 0) {
             var message = "You: " + Game.player1points + " Him: " + Game.player2points;
             gameFinished(Game.player1points >= Game.player2points, message);
+        }
+        if (count < originalCount && count % 2 == 0) {
+            Game.AImove();
         }
     }
 
     var counter=setInterval(timer, 1000); //1000 will run it every 1 second
     count++; // Makes the count start at the original count.
     timer();
-/*
-    var titleText = Crafty.e("2D, DOM, Text").attr({
-        w : 2170,
-        h : 400,
-        x : 435,
-        y : 0
-    }).text("CardBlocks").textFont({
-        size : '40px'
-    });
-*/
-});
 
+
+//
+//
+//
+//
 var Game = {
 map_grid: {
     height: 5,
@@ -161,7 +281,6 @@ createCard: function() {
                       .attr({ x: 10, y:10, })
                       .text(card.value).textFont({
               size : '25px' });
-                //TODO: figure out how to make the text larger
     card.moveTo = function(x, y) { this.bg.x = x; this.bg.y = y; };
     
     card.bg.attach(card.text);
@@ -433,6 +552,24 @@ refreshCursorPos: function() {
     rightMarker.x = this.map_grid.tile.width * (this.player2pos + this.map_grid.player_width+1) + this.map_grid.tile.width / 3;
     rightMarker.y = this.map_grid.tile.height / 3 + this.map_grid.tile.height * this.findLowestFreeCell(this.player2pos+this.map_grid.player_width+1);
 },
+AImove: function() {
+    //temporary AI code
+    Game.player2pos = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
+    while (Game.findLowestFreeCell(Game.player2pos + (Game.map_grid.player_width+1)) == -1) {
+        Game.player2pos = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
+    }
+    dropPos = Game.dropCard(1);
+    block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
+    if (block) {
+        Game.player2points += block.points;
+        Game.removeBlock(block);
+    }
+    Game.player2card = Game.createCard();
+    Game.player2card.moveTo((Game.map_grid.player_width + 5) * Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
+    if (Game.checkPlayer2Lose()) {
+        gameFinished(true, "He ran out of room!");
+    }
+},
 
 
 // Initialize and start our game
@@ -440,7 +577,6 @@ start: function() {
     // Start crafty and set a background color so that we can see it's working
     Crafty.init(Game.width(), Game.height());
     Crafty.background('green');
-    Crafty.scene("menu");
     
     for (var x = 0; x < Game.map_grid.width; x++) {
         Game.map_grid.cards.push(new Array());
@@ -529,9 +665,6 @@ start: function() {
                 if (Game.checkPlayer1Lose()) {
                     gameFinished(false, "You ran out of room!");
                 }
-                if (Game.checkPlayer2Lose()) {
-                    gameFinished(true, "He ran out of room!");
-                }
             }
 
         });
@@ -544,6 +677,12 @@ start: function() {
     
     Crafty.e("2D, DOM, Text")
           .attr({x: Game.map_grid.tile.width, y:Game.map_grid.tile.height * 6 - 20, w: 100, h: 100 })
+        .text('next card:').textFont({
+         size : '15px'   
+         });
+          
+    Crafty.e("2D, DOM, Text")
+          .attr({x: (Game.map_grid.player_width + 5) * Game.map_grid.tile.width, y:Game.map_grid.tile.height * 6 - 20, w: 100, h: 100 })
         .text('next card:').textFont({
          size : '15px'   
          });
@@ -564,6 +703,33 @@ start: function() {
 
     Game.player1card = Game.createCard();
     Game.player1card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
+    Game.player2card = Game.createCard();
+    Game.player2card.moveTo((Game.map_grid.player_width + 5) * Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
 }
 };
-window.addEventListener('load', Game.start);
+
+
+//
+//
+//
+//
+//
+
+
+/*
+    var titleText = Crafty.e("2D, DOM, Text").attr({
+        w : 2170,
+        h : 400,
+        x : 435,
+        y : 0
+    }).text("CardBlocks").textFont({
+        size : '40px'
+    });
+*/
+
+    Game.start();
+
+});
+
+
+window.addEventListener('load', Screen.start);
