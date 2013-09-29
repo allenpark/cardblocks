@@ -38,17 +38,17 @@ var gameFinished = function(youWon, message) {
     }
 
 var playagain = Crafty.e("2D, DOM, Text, Mouse").attr({
-		 w : 2170,
-		 h : 400,
-		 x : 330,
-		 y : 100
-	     }).text("Click to Play Again").textFont({
-		 size : '40px'   
-	     });
+         w : 2170,
+         h : 400,
+         x : 330,
+         y : 100
+         }).text("Click to Play Again").textFont({
+         size : '40px'   
+         });
 
 playagain.bind('MouseUp', function(e) {
     if( e.mouseButton == Crafty.mouseButtons.LEFT ){
-	location.reload();
+    location.reload();
     }
 });
  
@@ -83,14 +83,14 @@ Crafty.scene("menu", function() {
         } else {
             timeText.text("time remaining: " + min + ": " + sec );
         }
-	    if (min ==0 && sec == 0) {
+        if (min ==0 && sec == 0) {
             var message = "You: " + Game.player1points + " Him: " + Game.player2points;
             gameFinished(Game.player1points >= Game.player2points, message);
         }
     }
 
     var counter=setInterval(timer, 1000); //1000 will run it every 1 second
-	count++; // Makes the count start at the original count.
+    count++; // Makes the count start at the original count.
     timer();
 /*
     var titleText = Crafty.e("2D, DOM, Text").attr({
@@ -152,7 +152,7 @@ createCard: function() {
     card.text = Crafty.e("2D, DOM, Text")
                       .attr({ x: 10, y:10, })
                       .text(card.value).textFont({
-			  size : '25px' });
+              size : '25px' });
                 //TODO: figure out how to make the text larger
     card.moveTo = function(x, y) { this.bg.x = x; this.bg.y = y; };
     
@@ -172,7 +172,7 @@ dropCard: function(index) {
         this.map_grid.cards[column][row] = this.player1card;
         return [column, row];
     }
-	else {
+    else {
         var column = this.player2pos + (Game.map_grid.player_width+1);
         var row = this.findLowestFreeCell(column);
      
@@ -180,8 +180,8 @@ dropCard: function(index) {
                                  row * this.map_grid.tile.height + 5);
         this.map_grid.cards[column][row] = this.player2card;
         return [column, row];
-	}
-		
+    }
+        
     return [-1, -1];
 },
 calculatePoints: function(size, type) {
@@ -192,10 +192,10 @@ calculatePoints: function(size, type) {
     }
 },
 updatePointsDisplay: function() {
-	Game.player1pointsText.text("P1 score: " + Game.player1points).textFont({
+    Game.player1pointsText.text("P1 score: " + Game.player1points).textFont({
         size : '16px'   
     });
-	Game.player2pointsText.text("P2 score: " + Game.player2points).textFont({
+    Game.player2pointsText.text("P2 score: " + Game.player2points).textFont({
         size : '16px'   
     });
 },
@@ -391,7 +391,7 @@ checkPlayer2Lose: function() {
 refreshCursorPos: function() {
     leftMarker.x = this.map_grid.tile.width * this.player1pos + this.map_grid.tile.width / 3;
     leftMarker.y = this.map_grid.tile.height / 3 + this.map_grid.tile.height * this.findLowestFreeCell(this.player1pos);
-	
+    
     rightMarker.x = this.map_grid.tile.width * (this.player2pos + this.map_grid.player_width+1) + this.map_grid.tile.width / 3;
     rightMarker.y = this.map_grid.tile.height / 3 + this.map_grid.tile.height * this.findLowestFreeCell(this.player2pos+this.map_grid.player_width+1);
 },
@@ -403,7 +403,7 @@ start: function() {
     Crafty.init(Game.width(), Game.height());
     Crafty.background('green');
     Crafty.scene("menu");
-	
+    
     for (var x = 0; x < Game.map_grid.width; x++) {
         Game.map_grid.cards.push(new Array());
         for (var y = 0; y < Game.map_grid.height; y++) {
@@ -510,22 +510,22 @@ start: function() {
     Crafty.e("2D, DOM, Text")
           .attr({x: Game.map_grid.tile.width, y:Game.map_grid.tile.height * 6 - 20, w: 100, h: 100 })
         .text('next card:').textFont({
-		 size : '15px'   
-	     });
-		  
-	Game.player1pointsText = Crafty.e("2D, DOM, Text").attr({
-		w : 2170,
+         size : '15px'   
+         });
+          
+    Game.player1pointsText = Crafty.e("2D, DOM, Text").attr({
+        w : 2170,
         h : 400,
         x : 80,
         y : 430
-	});
-	Game.player2pointsText = Crafty.e("2D, DOM, Text").attr({
-		w : 2170,
+    });
+    Game.player2pointsText = Crafty.e("2D, DOM, Text").attr({
+        w : 2170,
         h : 400,
         x : 880,
         y : 430
-	});
-	Game.updatePointsDisplay();
+    });
+    Game.updatePointsDisplay();
 
     Game.player1card = Game.createCard();
     Game.player1card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
