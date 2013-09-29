@@ -269,9 +269,11 @@ printCards: function() {
     }
 },
 
-createCard: function() {
+createCard: function(val) {
     var card = {};
-    card.value = Crafty.math.randomInt(this.MIN_CARD, this.MAX_CARD);
+    if (val == -1) {
+	card.value = Crafty.math.randomInt(this.MIN_CARD, this.MAX_CARD);
+    }
     card.bg = Crafty.e("Card, 2D, DOM, Color")
                     .color('rgb(255, 255, 255)')
                     .attr({ x: 0,
@@ -294,7 +296,10 @@ createWrapperCard: function(val) {
     var card = {value: val};
     return card;
 },
-
+assignCard: function(player, card) {
+    if (player == 0) Game.player1card = card;
+    else Game.player2card = card;
+},
 dropCard: function(index, pos) {
     if (index == 0) {
         var column = pos;
@@ -523,9 +528,12 @@ transferBlock: function(player, block) {
 	    dropLocation = valid[Crafty.math.randomInt(0, valid.length-1)];
 	}
 	else {
-	    dropLocation = offset;
+	    dropLocation = 0;
 	}
-	Game.dropCard(1 - player, 0);
+	for (var i=block.bottomX; i>=block.topX; --i) {
+	    assignCard(1 - player, createCard(anchor2 + sign * (block.bottomX - i)));
+	    Game.dropCard(1 - player, dropLocation);
+	}
     }
     else {
 	//panic
@@ -603,7 +611,7 @@ AImove: function() {
         Game.removeBlock(block);
 
     }
-    Game.player2card = Game.createCard();
+    Game.player2card = Game.createCard(-1);
     Game.player2card.moveTo((Game.map_grid.player_width + 5) * Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
     if (Game.checkPlayer2Lose()) {
         gameFinished(true, "He ran out of room!");
@@ -694,7 +702,7 @@ start: function() {
             } else if (Game.player1card != null && (e.keyCode == 32 || e.keyCode == 40) && Game.findLowestFreeCell(Game.player1pos) != -1) {
                 var dropPos = Game.dropCard(0, Game.player1pos);
 
-                Game.player1card = Game.createCard();
+                Game.player1card = Game.createCard(-1);
                 Game.player1card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
                 var block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
                 if (block) {
@@ -743,9 +751,9 @@ start: function() {
     });
     Game.updatePointsDisplay();
 
-    Game.player1card = Game.createCard();
+    Game.player1card = Game.createCard(-1);
     Game.player1card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
-    Game.player2card = Game.createCard();
+    Game.player2card = Game.createCard(-1);
     Game.player2card.moveTo((Game.map_grid.player_width + 5) * Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
 
     this.counter=setInterval(this.timer.bind(this), 1000); //1000 will run it every 1 second
