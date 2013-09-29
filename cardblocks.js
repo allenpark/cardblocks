@@ -13,8 +13,17 @@ Crafty.scene("title", function() {
 		 w : 2170,
 		 h : 400,
 		 x : 370,
-		 y : 150
+		 y : 100
 	     }).text("Start").textFont({
+		 size : '40px'   
+	     });
+
+ var ruleText = Crafty.e("2D, DOM, Text, Mouse").attr({
+		 w : 2170,
+		 h : 400,
+		 x : 370,
+		 y : 200
+	     }).text("Rules").textFont({
 		 size : '40px'   
 	     });
 
@@ -30,6 +39,41 @@ Crafty.scene("title", function() {
 startText.bind('MouseDown', function(e) {
     if( e.mouseButton == Crafty.mouseButtons.LEFT ){
 	Crafty.scene("game");
+    }
+
+
+});
+
+ruleText.bind('MouseDown', function(e) {
+    if( e.mouseButton == Crafty.mouseButtons.LEFT ){
+	Crafty("*").each(function() {
+		this.destroy();
+	});
+	var blah = Crafty.e("2D, DOM, Text, Mouse").attr({
+		 w : 2170,
+		 h : 400,
+		 x : 200,
+		 y : 0
+	     }).text("Back to Main Screen").textFont({
+		 size : '40px'   
+	     }).textColor("#FF0000");
+	blah.bind('MouseDown', function(e) {
+    if( e.mouseButton == Crafty.mouseButtons.LEFT ){
+	location.reload();
+    }
+
+
+
+
+});
+
+var bg = Crafty.e("2D, DOM, Image")
+             .image("cbrules.png")
+            .attr({x: 20, y: 60});
+	//var ent = Crafty.e("2D, DOM, Image").image("cbexamples.png");
+	//var ent2 = Crafty.e("2D, DOM, Image").image("cbrules.png");
+
+
     }
 
 
