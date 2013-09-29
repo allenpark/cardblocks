@@ -56,7 +56,8 @@ playagain.bind('MouseUp', function(e) {
 
 
 Crafty.scene("menu", function() {
-    var count=300;
+    var originalCount = 300;
+    var count = originalCount;
 
     var timeText = Crafty.e("2D, DOM, Text").attr({
         w : 2170,
@@ -69,23 +70,26 @@ Crafty.scene("menu", function() {
 
     function timer()
     {
-        count=count-1;
+        count = count - 1;
         if (count <= 0 || gameOver)
         {
             clearInterval(counter);
             return;
         }
-        var min =Math.floor(count/60);
-        var sec =  count%60
-        if (sec<10)
+        var min = Math.floor(count / 60);
+        var sec = count % 60;
+        if (sec < 10)
         {
             timeText.text("time remaining: " + min + ": " + "0" + sec );
         } else {
             timeText.text("time remaining: " + min + ": " + sec );
         }
-        if (min ==0 && sec == 0) {
+        if (min == 0 && sec == 0) {
             var message = "You: " + Game.player1points + " Him: " + Game.player2points;
             gameFinished(Game.player1points >= Game.player2points, message);
+        }
+        if (count < originalCount && count % 5 == 0) {
+            // TODO: this is where the AI should make their move.
         }
     }
 
