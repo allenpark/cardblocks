@@ -88,8 +88,8 @@ Crafty.scene("menu", function() {
             var message = "You: " + Game.player1points + " Him: " + Game.player2points;
             gameFinished(Game.player1points >= Game.player2points, message);
         }
-        if (count < originalCount && count % 5 == 0) {
-            // TODO: this is where the AI should make their move.
+        if (count < originalCount && count % 2 == 0) {
+            Game.AImove();
         }
     }
 
@@ -398,6 +398,24 @@ refreshCursorPos: function() {
     rightMarker.x = this.map_grid.tile.width * (this.player2pos + this.map_grid.player_width+1) + this.map_grid.tile.width / 3;
     rightMarker.y = this.map_grid.tile.height / 3 + this.map_grid.tile.height * this.findLowestFreeCell(this.player2pos+this.map_grid.player_width+1);
 },
+AImove: function() {
+    //temporary AI code
+    Game.player2pos = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
+    while (Game.findLowestFreeCell(Game.player2pos + (Game.map_grid.player_width+1)) == -1) {
+        Game.player2pos = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
+    }
+    dropPos = Game.dropCard(1);
+    block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
+    if (block) {
+        Game.player2points += block.points;
+        Game.removeBlock(block);
+    }
+    Game.player2card = Game.createCard();
+    Game.player2card.moveTo((Game.map_grid.player_width + 5) * Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
+    if (Game.checkPlayer2Lose()) {
+        gameFinished(true, "He ran out of room!");
+    }
+},
 
 
 // Initialize and start our game
@@ -479,27 +497,11 @@ start: function() {
                     Game.player1points += block.points;
                     Game.removeBlock(block);
                 }
-                //temporary AI code
-                Game.player2pos = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
-                while (Game.findLowestFreeCell(Game.player2pos + (Game.map_grid.player_width+1)) == -1) {
-                    Game.player2pos = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
-                }
-                dropPos = Game.dropCard(1);
-                block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
-                if (block) {
-                    Game.player2points += block.points;
-                    Game.removeBlock(block);
-                }
-                Game.player2card = Game.createCard();
-                Game.player2card.moveTo((Game.map_grid.player_width + 5) * Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
 
                 Game.refreshCursorPos();
                 Game.updatePointsDisplay();
                 if (Game.checkPlayer1Lose()) {
                     gameFinished(false, "You ran out of room!");
-                }
-                if (Game.checkPlayer2Lose()) {
-                    gameFinished(true, "He ran out of room!");
                 }
             }
 
