@@ -251,9 +251,9 @@ createWrapperCard: function(val) {
     return card;
 },
 
-dropCard: function(index) {
+dropCard: function(index, pos) {
     if (index == 0) {
-        var column = this.player1pos;
+        var column = pos;
         var row = this.findLowestFreeCell(column);
      
         this.player1card.moveTo(column * this.map_grid.tile.width + 5,
@@ -262,7 +262,7 @@ dropCard: function(index) {
         return [column, row];
     }
     else {
-        var column = this.player2pos + (Game.map_grid.player_width+1);
+        var column = pos + (Game.map_grid.player_width+1);
         var row = this.findLowestFreeCell(column);
      
         this.player2card.moveTo(column * this.map_grid.tile.width + 5,
@@ -461,14 +461,17 @@ transferBlock: function(player, block) {
     var offset = player * (Game.map_grid.player_width + 1);
     var dropLocation = 0;
 
-    if (bottomY == topY) {
+    if (block.bottomY == block.topY) {
 	
     }
-    else if (bottomX == topX) {
+    else if (block.bottomX == block.topX) {
 	var valid = [];
+	var sign = 1;
+	if (block.anchor1 < block.anchor2) sign = -1;
+
 	for (var i=0; i<Game.map_grid.player_width; ++i) {
 	    var row = Game.findLowestFreeCell(i + offset);
-	    if (row - (topY - bottomY) >= 0) {
+	    if (row - (block.topY - block.bottomY) >= 0) {
 		valid.push(i);
 	    }
 	}
@@ -478,6 +481,7 @@ transferBlock: function(player, block) {
 	else {
 	    dropLocation = offset;
 	}
+	Game.dropCard(1 - player, 0);
     }
     else {
 	//panic
@@ -548,7 +552,7 @@ refreshCursorPos: function() {
 AImove: function() {
     //temporary AI code
     Game.player2pos = Game.calculateNextAIMove();
-    dropPos = Game.dropCard(1);
+    dropPos = Game.dropCard(1, Game.player2pos);
     block = Game.checkCellForBlocks(dropPos[0], dropPos[1]);
     if (block) {
         Game.player2points += block.points;
@@ -644,7 +648,7 @@ start: function() {
                     Game.refreshCursorPos();
                 }
             } else if (Game.player1card != null && (e.keyCode == 32 || e.keyCode == 40) && Game.findLowestFreeCell(Game.player1pos) != -1) {
-                var dropPos = Game.dropCard(0);
+                var dropPos = Game.dropCard(0, Game.player1pos);
 
                 Game.player1card = Game.createCard();
                 Game.player1card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
