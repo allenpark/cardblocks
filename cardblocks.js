@@ -90,30 +90,17 @@ eText.bind('MouseDown', function(g) {
 
 
 });
-
-
 });
 
 var Screen = {
-  start: function() {
-    Crafty.init(780, 540);
-  Crafty.scene("title");
-
-
-	     
-  }
+    start: function() {
+        Crafty.init(780, 540);
+        Crafty.scene("title");
+    }
 };
 
-
-
-
-
 Crafty.scene("game", function() {
-
-//
-//
-
-var MIN_CARD = 1;	
+var MIN_CARD = 1;
 var MAX_CARD = 9;
 var MIN_DUPLICATE_SIZE = 2;
 var MIN_STRAIGHT_SIZE = 3;
@@ -123,8 +110,6 @@ var gameFinished = function(youWon, message) {
     gameOver = true;
     Crafty("*").each(function() {
         this.destroy();
-
-
     });
 
     var displayText = "GAME OVER";
@@ -141,7 +126,7 @@ var gameFinished = function(youWon, message) {
     }).text(displayText).textFont({
         size : '40px'   
     });
-	if (message) {
+    if (message) {
         Crafty.e("2D, DOM, Text").attr({
             w : 2170,
             h : 400,
@@ -152,32 +137,22 @@ var gameFinished = function(youWon, message) {
         });
     }
 
-var playagain = Crafty.e("2D, DOM, Text, Mouse").attr({
-         w : 2170,
-         h : 400,
-         x : 330,
-         y : 100
-         }).text("Click to Play Again").textFont({
-         size : '40px'   
-         });
+    var playagain = Crafty.e("2D, DOM, Text, Mouse").attr({
+        w : 2170,
+        h : 400,
+        x : 330,
+        y : 100
+    }).text("Click to Play Again").textFont({
+        size : '40px'   
+    });
 
-playagain.bind('MouseUp', function(e) {
-    if( e.mouseButton == Crafty.mouseButtons.LEFT ){
-    location.reload();
-    }
-});
+    playagain.bind('MouseUp', function(e) {
+        if (e.mouseButton == Crafty.mouseButtons.LEFT) {
+            location.reload();
+        }
+    });
  
 };
-
-
-
-
-
-
-//
-//
-
-
     var originalCount = 180;
     var count = originalCount;
 
@@ -219,11 +194,6 @@ playagain.bind('MouseUp', function(e) {
     count++; // Makes the count start at the original count.
     timer();
 
-
-//
-//
-//
-//
 var Game = {
 map_grid: {
     height: 5,
@@ -259,12 +229,12 @@ height: function() {
 },
 printCards: function() {
     for (var j=0; j<Game.map_grid.height; ++j) {
-	var s = "";
-	for (var i=0; i<Game.map_grid.width; ++i) {
-	    s += Game.map_grid.cards[i][j].value;
-	    if (i < Game.map_grid.width-1) s += ",";
-	}
-	console.log(s);
+    var s = "";
+    for (var i=0; i<Game.map_grid.width; ++i) {
+        s += Game.map_grid.cards[i][j].value;
+        if (i < Game.map_grid.width-1) s += ",";
+    }
+    console.log(s);
     }
 },
 
