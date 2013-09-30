@@ -771,7 +771,7 @@ start: function() {
                 Game.updatePointsDisplay();
                 if (Game.checkPlayer1Lose()) {
                     this.gameFinished(false, "You ran out of room!");
-		    Crafty.audio.remove("theme");
+                    Crafty.audio.remove("theme");
                 }
             }
 
