@@ -392,6 +392,10 @@ checkCellForBlocks: function(cellX, cellY) {
     // 'anchor1' and 'anchor2' denote the two numbers at each edge of the block.
     // this is used to help with transferring blocks to the other player's grid.
 
+    if (cellX < 0 || cellY < 0 || cellX >= Game.map_grid.width || cellY >= Game.map_grid.height) {
+        return null;
+    }
+
     var cellContents = this.map_grid.cards[cellX][cellY].value;
     var bestBlock = null;
     var type = 'duplicates';
