@@ -508,53 +508,57 @@ transferBlock: function(player, block) {
     //but then again, so does checkCellForBlocks
 
     if (!block) {
-	return;
+        return;
     }
 
     var offset = player * (Game.map_grid.player_width + 1);
     var dropLocation = 0;
+    console.log(block);
 
     if (block.bottomY == block.topY) {
-	var valid = [];
-	var sign = 1;
-	if (block.anchor1 < block.anchor2) sign = -1;
-	else if (block.anchor1 == block.anchor2) sign = 0;	
+        var valid = [];
+        var sign = 1;
+        if (block.anchor1 > block.anchor2) sign = -1;
+        else if (block.anchor1 == block.anchor2) sign = 0;	
 	
-	dropLocation = Crafty.math.randomInt(0, Game.map_grid.player_width-1-(block.topX-block.bottomX));
+        dropLocation = Crafty.math.randomInt(0, Game.map_grid.player_width-1-(block.topX-block.bottomX));
 
-	var cardHold = Game.player2card;
-	if (player == 1) cardHold = Game.player1card;
+        var cardHold = Game.player2card;
+        if (player == 1) cardHold = Game.player1card;
 
-	for (var i=block.topY; i>=block.bottomY; --i) {
-
+        for (var i=block.bottomX; i<=block.topX; ++i) {
+            Game.assignCard(1 - player, Game.createCard(block.anchor1 + sign * (i - block.bottomX)));
+            Game.dropCard(1 - player, dropLocation + (i - block.bottomX));
+        }
+        Game.assignCard(1 - player, cardHold);
     }
     else if (block.bottomX == block.topX) {
-	var valid = [];
-	var sign = 1;
-	if (block.anchor1 < block.anchor2) sign = -1;
-	else if (block.anchor1 == block.anchor2) sign = 0;
+        var valid = [];
+        var sign = 1;
+        if (block.anchor1 < block.anchor2) sign = -1;
+        else if (block.anchor1 == block.anchor2) sign = 0;
 
-	for (var i=0; i<Game.map_grid.player_width; ++i) {
-	    var row = Game.findLowestFreeCell(i + offset);
-	    if (row - (block.topY - block.bottomY) >= 0) {
-		valid.push(i);
-	    }
-	}
-	if (valid.length > 0) {
-	    dropLocation = valid[Crafty.math.randomInt(0, valid.length-1)];
-	}
-	else {
-	    dropLocation = 0;
-	}
-	var cardHold = Game.player2card;
-	if (player == 1) cardHold = Game.player1card;
+        for (var i=0; i<Game.map_grid.player_width; ++i) {
+            var row = Game.findLowestFreeCell(i + offset);
+            if (row - (block.topY - block.bottomY) >= 0) {
+                valid.push(i);
+            }
+        }
+        if (valid.length > 0) {
+            dropLocation = valid[Crafty.math.randomInt(0, valid.length-1)];
+        }
+        else {
+            dropLocation = 0;
+        }
+        var cardHold = Game.player2card;
+        if (player == 1) cardHold = Game.player1card;
 
-	for (var i=block.topY; i>=block.bottomY; --i) {
-	    console.log(i);
-	    Game.assignCard(1 - player, Game.createCard(block.anchor2 + sign * (block.topY - i)));
-	    Game.dropCard(1 - player, dropLocation);
-	}
-	Game.assignCard(1 - player, cardHold);
+        for (var i=block.topY; i>=block.bottomY; --i) {
+            console.log(i);
+            Game.assignCard(1 - player, Game.createCard(block.anchor2 + sign * (block.topY - i)));
+            Game.dropCard(1 - player, dropLocation);
+        }
+        Game.assignCard(1 - player, cardHold);
     }
     else {
 	//panic
