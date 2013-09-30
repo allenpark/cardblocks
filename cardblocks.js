@@ -665,6 +665,20 @@ start: function() {
     Crafty.background('green');
 
 
+    var pay = Crafty.e("2D, DOM, Text, Mouse").attr({
+        w : 2170,
+        h : 400,
+        x : 330,
+        y : 400
+    }).text("Click to Play Again").textFont({
+        size : '40px'   
+    });
+
+    pay.bind('MouseUp', function(e) {
+        if (e.mouseButton == Crafty.mouseButtons.LEFT) {
+            location.reload();
+        }
+    });
     
     for (var x = 0; x < Game.map_grid.width; x++) {
         Game.map_grid.cards.push(new Array());
