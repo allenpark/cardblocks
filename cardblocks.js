@@ -178,8 +178,8 @@ player2pointsText: null,
 currentPlayer: 0, // used for block clearing and sending
 leftMarker: null,
 rightMarker: null,
-originalCount: 180,
-count: 180,
+originalCount: 10,
+count: 10,
 counter: null,
 MIN_CARD: 1,
 MAX_CARD: 9,
@@ -660,9 +660,13 @@ AImove: function() {
 
 // Initialize and start our game
 start: function() {
+
+
     // Start crafty and set a background color so that we can see it's working
     Crafty.init(Game.width(), Game.height());
     Crafty.background('green');
+
+
     
     for (var x = 0; x < Game.map_grid.width; x++) {
         Game.map_grid.cards.push(new Array());
@@ -751,6 +755,7 @@ start: function() {
                 Game.updatePointsDisplay();
                 if (Game.checkPlayer1Lose()) {
                     this.gameFinished(false, "You ran out of room!");
+		    Crafty.audio.remove("theme");
                 }
             }
 
@@ -795,7 +800,7 @@ start: function() {
 
 
     Crafty.audio.add("theme", "TetrisAmazingRemix.mp3");
-    Crafty.audio.play("theme", -1);
+    Crafty.audio.play("theme", -1, 0.25);
 
     this.counter=setInterval(this.timer.bind(this), 1000); //1000 will run it every 1 second
     this.count++; // Makes the count start at the original count.
