@@ -368,10 +368,13 @@ calculateNextAIMove: function() {
 	Game.map_grid.cards[tryColumn][tryRow] = Game.empty_card;
     }
     if (toReturn == -1) {
-	toReturn = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
-	while (Game.findLowestFreeCell(toReturn + (Game.map_grid.player_width+1)) == -1) {
-	    toReturn = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
-	}
+        toReturn = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
+        for (var i=0; i<100; ++i) {
+            if (Game.findLowestFreeCell(toReturn + (Game.map_grid.player_width+1)) == -1) {
+                toReturn = Crafty.math.randomInt(0, Game.map_grid.player_width-1);
+                break;
+            }
+        }
     }
     return toReturn;
 },
