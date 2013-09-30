@@ -1,5 +1,5 @@
 Crafty.scene("title", function() {
- Crafty.background('blue');
+ Crafty.background('purple');
     var nameText = Crafty.e("2D, DOM, Text").attr({
 		 w : 2170,
 		 h : 400,
@@ -90,6 +90,15 @@ eText.bind('MouseDown', function(g) {
 		 x : 100,
 		 y : 0
 	     }).text("Thanks for Playing our Crafty Game").textFont({
+		 size : '40px'   
+	     });
+
+var ggggText = Crafty.e("2D, DOM, Text, Mouse").attr({
+		 w : 2170,
+		 h : 400,
+		 x : 100,
+		 y : 100
+	     }).text("Music:  Tetris Remix by unrl").textFont({
 		 size : '40px'   
 	     });
  var tText = Crafty.e("2D, DOM, Text, Mouse").attr({
@@ -783,6 +792,10 @@ start: function() {
     Game.player1card.moveTo(Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
     Game.player2card = Game.createCard(-1);
     Game.player2card.moveTo((Game.map_grid.player_width + 5) * Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
+
+
+    Crafty.audio.add("theme", "TetrisAmazingRemix.mp3");
+    Crafty.audio.play("theme", -1);
 
     this.counter=setInterval(this.timer.bind(this), 1000); //1000 will run it every 1 second
     this.count++; // Makes the count start at the original count.
