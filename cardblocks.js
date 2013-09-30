@@ -97,9 +97,17 @@ var ggggText = Crafty.e("2D, DOM, Text, Mouse").attr({
 		 w : 2170,
 		 h : 400,
 		 x : 100,
-		 y : 100
+		 y : 360
 	     }).text("Music:  Tetris Remix by unrl").textFont({
-		 size : '40px'   
+		 size : '24px'   
+	     });
+var attrText = Crafty.e("2D, DOM, Text, Mouse").attr({
+		 w : 2170,
+		 h : 400,
+		 x : 100,
+		 y : 400
+	     }).text("Sound FX: courtesy of FlashKit (www.flashkit.com)").textFont({
+		 size : '24px'   
 	     });
  var tText = Crafty.e("2D, DOM, Text, Mouse").attr({
 		 w : 2170,
