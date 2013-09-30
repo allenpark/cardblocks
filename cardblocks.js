@@ -68,7 +68,7 @@ ruleText.bind('MouseDown', function(e) {
 });
 
 var bg = Crafty.e("2D, DOM, Image")
-             .image("cbrules.png")
+             .image("cbrevised.png")
             .attr({x: 20, y: 60});
 	//var ent = Crafty.e("2D, DOM, Image").image("cbexamples.png");
 	//var ent2 = Crafty.e("2D, DOM, Image").image("cbrules.png");
