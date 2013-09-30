@@ -649,6 +649,8 @@ AImove: function() {
         Game.player2points += block.points;
         Game.removeBlock(1, block);
 
+        Crafty.audio.add("thunk", "thunk.mp3");
+        Crafty.audio.play("thunk", 1, 0.5);
     }
     Game.player2card = Game.createCard(-1);
     Game.player2card.moveTo((Game.map_grid.player_width + 5) * Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
@@ -765,6 +767,9 @@ start: function() {
                 if (block) {
                     Game.player1points += block.points;
                     Game.removeBlock(0, block);
+
+                    Crafty.audio.add("ding", "ding.mp3");
+                    Crafty.audio.play("ding", 1, 0.5);
                 }
 
                 Game.refreshCursorPos();
