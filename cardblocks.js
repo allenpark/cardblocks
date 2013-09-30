@@ -178,8 +178,8 @@ player2pointsText: null,
 currentPlayer: 0, // used for block clearing and sending
 leftMarker: null,
 rightMarker: null,
-originalCount: 10,
-count: 10,
+originalCount: 180,
+count: 180,
 counter: null,
 MIN_CARD: 1,
 MAX_CARD: 9,
@@ -666,6 +666,20 @@ start: function() {
     Crafty.background('green');
 
 
+    var pay = Crafty.e("2D, DOM, Text, Mouse").attr({
+        w : 2170,
+        h : 400,
+        x : 330,
+        y : 400
+    }).text("Click to Play Again").textFont({
+        size : '40px'   
+    });
+
+    pay.bind('MouseUp', function(e) {
+        if (e.mouseButton == Crafty.mouseButtons.LEFT) {
+            location.reload();
+        }
+    });
     
     for (var x = 0; x < Game.map_grid.width; x++) {
         Game.map_grid.cards.push(new Array());
