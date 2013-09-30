@@ -522,7 +522,6 @@ transferBlock: function(player, block) {
 
     var offset = player * (Game.map_grid.player_width + 1);
     var dropLocation = 0;
-    console.log(block);
 
     if (block.bottomY == block.topY) {
         var valid = [];
@@ -563,7 +562,6 @@ transferBlock: function(player, block) {
         if (player == 1) cardHold = Game.player1card;
 
         for (var i=block.topY; i>=block.bottomY; --i) {
-            console.log(i);
             Game.assignCard(1 - player, Game.createCard(block.anchor2 + sign * (block.topY - i)));
             Game.dropCard(1 - player, dropLocation);
         }
