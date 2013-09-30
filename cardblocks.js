@@ -586,6 +586,14 @@ transferBlock: function(player, block) {
     else {
 	//panic
     }
+	if (Game.checkPlayer1Lose()) {
+        Game.gameFinished(false, "You ran out of room!");
+        Crafty.audio.remove("theme");
+    }
+    if (Game.checkPlayer2Lose()) {
+        this.gameFinished(true, "He ran out of room!");
+    }
+
 },
 makeBlocksFall: function() {
     var movedBlocks = [];
