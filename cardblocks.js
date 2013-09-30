@@ -185,6 +185,7 @@ MIN_CARD: 1,
 MAX_CARD: 9,
 MIN_DUPLICATE_SIZE: 2,
 MIN_STRAIGHT_SIZE: 3,
+AI_PLAY_INTERVAL: 4,
 timeText: null,
 gameOver: false,
 
@@ -256,7 +257,7 @@ timer: function()
         var message = "You: " + Game.player1points + " Him: " + Game.player2points;
         this.gameFinished(Game.player1points >= Game.player2points, message);
     }
-    if (this.count < this.originalCount && this.count % 2 == 0 && !this.gameOver) {
+    if (this.count < this.originalCount && this.count % Game.AI_PLAY_INTERVAL == 0 && !this.gameOver) {
         this.AImove();
     }
 },
