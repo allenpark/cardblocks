@@ -257,9 +257,9 @@ timer: function()
     var sec = this.count % 60;
     if (sec < 10)
     {
-        this.timeText.text("time remaining: " + min + ": " + "0" + sec );
+        this.timeText.text("Time remaining: " + min + ": " + "0" + sec );
     } else {
-        this.timeText.text("time remaining: " + min + ": " + sec );
+        this.timeText.text("Time remaining: " + min + ": " + sec );
     }
     if (min == 0 && sec == 0) {
         var message = "You: " + Game.player1points + " Him: " + Game.player2points;
@@ -685,11 +685,11 @@ start: function() {
 
     var pay = Crafty.e("2D, DOM, Text, Mouse").attr({
         w : 2170,
-        h : 400,
-        x : 330,
-        y : 400
-    }).text("Click to Play Again").textFont({
-        size : '40px'   
+        h : 200,
+        x : 370,
+        y : 500
+    }).text("Return to Main Menu").textFont({
+        size : '30px'
     });
 
     pay.bind('MouseUp', function(e) {
