@@ -627,6 +627,7 @@ findLowestFreeCell: function(column) {
 },
 checkPlayer1Lose: function() {
     for (var x = 0; x < this.map_grid.player_width; x++) {
+        console.log(x + "," + this.findLowestFreeCell(x));
         if (this.findLowestFreeCell(x) != -1) {
             return false;
         }
@@ -783,7 +784,7 @@ start: function() {
                 Game.refreshCursorPos();
                 Game.updatePointsDisplay();
                 if (Game.checkPlayer1Lose()) {
-                    this.gameFinished(false, "You ran out of room!");
+                    Game.gameFinished(false, "You ran out of room!");
                     Crafty.audio.remove("theme");
                 }
             }
