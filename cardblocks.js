@@ -638,7 +638,7 @@ AImove: function() {
     Game.player2card = Game.createCard(-1);
     Game.player2card.moveTo((Game.map_grid.player_width + 5) * Game.map_grid.tile.width, Game.map_grid.tile.height * (Game.map_grid.height+1));
     if (Game.checkPlayer2Lose()) {
-        gameFinished(true, "He ran out of room!");
+        this.gameFinished(true, "He ran out of room!");
     }
     Game.refreshCursorPos();
     Game.updatePointsDisplay();
@@ -737,7 +737,7 @@ start: function() {
                 Game.refreshCursorPos();
                 Game.updatePointsDisplay();
                 if (Game.checkPlayer1Lose()) {
-                    gameFinished(false, "You ran out of room!");
+                    this.gameFinished(false, "You ran out of room!");
                 }
             }
 
