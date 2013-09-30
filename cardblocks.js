@@ -515,7 +515,18 @@ transferBlock: function(player, block) {
     var dropLocation = 0;
 
     if (block.bottomY == block.topY) {
+	var valid = [];
+	var sign = 1;
+	if (block.anchor1 < block.anchor2) sign = -1;
+	else if (block.anchor1 == block.anchor2) sign = 0;	
 	
+	dropLocation = Crafty.math.randomInt(0, Game.map_grid.player_width-1-(block.topX-block.bottomX));
+
+	var cardHold = Game.player2card;
+	if (player == 1) cardHold = Game.player1card;
+
+	for (var i=block.topY; i>=block.bottomY; --i) {
+
     }
     else if (block.bottomX == block.topX) {
 	var valid = [];
